@@ -4,18 +4,22 @@ public class CameraManager : MonoBehaviour {
     public Vector3 targetPosition;
     public Vector3 targetRotation;
     public float targetFov;
+
     public float movementSpeed = 6;
     public float turningSpeed = 180;
     public float zoomingSpeed = 60;
 
     private Camera _camera;
+    private Vector3 defaultPosition;
+    private Vector3 defaultRotation;
+    private float defaultFov;
 
     void Start () {
         _camera = GetComponent<Camera>();
 
-        targetPosition = transform.position;
-        targetRotation = transform.eulerAngles;
-        targetFov = _camera.fieldOfView;
+        targetPosition = defaultPosition = transform.position;
+        targetRotation = defaultRotation = transform.eulerAngles;
+        targetFov = defaultFov = _camera.fieldOfView;
     }
 
 	void FixedUpdate () {
@@ -40,4 +44,16 @@ public class CameraManager : MonoBehaviour {
             _camera.fieldOfView = targetFov;
         }
 	}
+
+    public Vector3 GetDefaultPosition() {
+        return defaultPosition;
+    }
+
+    public Vector3 GetDefaultRotation() {
+        return defaultRotation;
+    }
+
+    public float GetDefaultFov() {
+        return defaultFov;
+    }
 }

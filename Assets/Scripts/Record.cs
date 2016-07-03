@@ -8,6 +8,7 @@ public class Record : MonoBehaviour {
     public Rigidbody body;
     public AudioSource audioSource;
     public AudioClip[] slapSounds;
+    public AudioClip[] wooshSounds;
 
     // This info will only be used in debug situations (actual infos are filled out at runtime)
     public RecordInfo info = new RecordInfo("The Recorders", "A Record", new byte[0], new Song[] { new Song("The Only Song") });
@@ -76,19 +77,27 @@ public class Record : MonoBehaviour {
         }
     }
 
-    public void PlaySlapSound (float volume) {
+    public void PlaySlapSound (float volume = 1f) {
         AudioClip clip = slapSounds[Random.Range(0, slapSounds.Length)];
         audioSource.PlayOneShot(clip, 0.1f * volume);
     }
 
+    public void PlayWooshSound(float volume = 1f) {
+        AudioClip clip = wooshSounds[Random.Range(0, wooshSounds.Length)];
+        audioSource.PlayOneShot(clip, 0.025f * volume);
+    }
+
     public void Flip () {
+        PlayWooshSound(2f);
         targetMeshSpin += 180;
     }
 
     public void SetSelected (bool selected) {
         targetMeshHeight = selected ? riseHeight : 0;
         if (!selected && targetMeshSpin % 360 != 0) {
-            targetMeshSpin += 180;
+            Flip();
+        } else {
+            PlayWooshSound(2.5f);
         }
     }
 

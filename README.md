@@ -12,3 +12,5 @@ Play Music in the Third Dimension (or shortly, playmusic3d) is a piece of softwa
 * Font: [F25 Bank Printer by Volker Busse](http://www.dafont.com/f25-bank-printer.font)
 * TagLib: [TagLib Sharp 2.1.0.0](https://github.com/mono/taglib-sharp/tree/taglib-sharp-2.1.0.0) ([LGPL](https://github.com/mono/taglib-sharp/blob/taglib-sharp-2.1.0.0/COPYING))
 * Vinyl Hiss sfx: [Vinyl Hiss by DanielsonIII](https://freesound.org/people/DanielsonIII/sounds/68400/)
+* Rain sfx: [Light Rain by soundrecorder7](http://freesound.org/people/soundrecorder7/sounds/167034/)
+* Fireplace sfx: [Loopedfire1 by stratcat322](http://freesound.org/people/stratcat322/sounds/233189/)

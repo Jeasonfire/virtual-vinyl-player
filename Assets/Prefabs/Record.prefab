@@ -310,6 +310,26 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 064f632494c23124099cf04dc7c96d45, type: 3}
   - {fileID: 8300000, guid: 8e4e47bc6dd5c8446a2eaca21d5c0f9a, type: 3}
   - {fileID: 8300000, guid: c26d844f60c78074a9114d1fc37fa2d6, type: 3}
+  - {fileID: 8300000, guid: 8c570b9dcdf13904488480034b436b7a, type: 3}
+  - {fileID: 8300000, guid: 709df7e0107d535459d30b33d0bcc719, type: 3}
+  - {fileID: 8300000, guid: ed4b5d66251138f49b04123159e9d517, type: 3}
+  - {fileID: 8300000, guid: 4d51e68b36769434b960dc3baea3e66e, type: 3}
+  - {fileID: 8300000, guid: 120dc39dd3eb8594a87de1cc9fc1884d, type: 3}
+  - {fileID: 8300000, guid: 62d9afa4d7093e64895c5a87d4e91eb3, type: 3}
+  - {fileID: 8300000, guid: 27c5328b468ba9f41bdcc21d0055e67b, type: 3}
+  - {fileID: 8300000, guid: 2dfc269d6344afc44bd69a36bbda8b9a, type: 3}
+  - {fileID: 8300000, guid: edcf27f4b9865b9429c6b8085f0051c3, type: 3}
+  - {fileID: 8300000, guid: c1b9d52ce3977a04b84b6bba8a73b138, type: 3}
+  - {fileID: 8300000, guid: 08a4d2735dff386439ff3979338ee118, type: 3}
+  wooshSounds:
+  - {fileID: 8300000, guid: 15a96176fc116034daadc7bcea4373ef, type: 3}
+  - {fileID: 8300000, guid: 22f9684afdfee614cad3b9e0dc39446f, type: 3}
+  - {fileID: 8300000, guid: d727d4c22e4098041bb845b085a3bd35, type: 3}
+  - {fileID: 8300000, guid: 43fb45ca63963cc4fb8a20b646f7d5a1, type: 3}
+  - {fileID: 8300000, guid: 2cf006d0ccb634d449fe3c4a26f5d983, type: 3}
+  - {fileID: 8300000, guid: 74a5a4fdb48e9f44abc1c2c59509a762, type: 3}
+  - {fileID: 8300000, guid: 5b5eb22941ae221488b66a590e9f927b, type: 3}
+  - {fileID: 8300000, guid: 185ff59df19331c48894edcfd8c3eb0c, type: 3}
   spinTime: 0.075
   riseTime: 0.25
   lowerTime: 0.3

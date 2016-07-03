@@ -7,6 +7,7 @@ public class RecordsManager : MonoBehaviour {
     public GameObject recordTemplate;
     public GameObject[] boxes;
     public CameraManager cam;
+    public Vector3 forward;
 
     private Record[] records;
     private int amountOfRecords;
@@ -87,7 +88,8 @@ public class RecordsManager : MonoBehaviour {
             SetSpringValue(selectedRecord.GetComponent<HingeJoint>(), 500, 0);
             selectedRecord.SetSelected(true);
             cam.targetRotation.x = 0;
-            cam.targetFov = 47 + 23 * ((float)currentlySelectedRecord / MAX_RECORDS_PER_BOX);
+            float deltaFov = 23;
+            cam.targetFov = cam.GetDefaultFov() - deltaFov * (1f - (float)currentlySelectedRecord / MAX_RECORDS_PER_BOX);
         }
     }
 
@@ -101,8 +103,8 @@ public class RecordsManager : MonoBehaviour {
             }
             selected = false;
             selectedRecord.SetSelected(false);
-            cam.targetRotation.x = 40;
-            cam.targetFov = 80;
+            cam.targetRotation.x = cam.GetDefaultRotation().x;
+            cam.targetFov = cam.GetDefaultFov();
         }
     }
 
@@ -116,6 +118,7 @@ public class RecordsManager : MonoBehaviour {
             if (previous != null) {
                 SetSpringValue(previous.GetComponent<HingeJoint>(), 20, 50 * direction);
                 previous.SetSelected(false);
+                previous.PlayWooshSound();
             }
             
             Unselect();
