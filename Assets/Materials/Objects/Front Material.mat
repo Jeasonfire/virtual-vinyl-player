@@ -102,7 +102,7 @@ Material:
       data:
         first:
           name: _Glossiness
-        second: 0.95
+        second: 0.65
       data:
         first:
           name: _BumpScale
@@ -114,7 +114,7 @@ Material:
       data:
         first:
           name: _DetailNormalMapScale
-        second: 0.1
+        second: 0.04
       data:
         first:
           name: _UVSec

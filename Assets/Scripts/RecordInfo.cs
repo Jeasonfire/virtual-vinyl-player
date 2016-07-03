@@ -3,10 +3,12 @@ using System.IO;
 
 public class Song {
     public string name;
+    public string artist;
     public string path;
 
-    public Song(string name, string path = "") {
+    public Song(string name, string artist = "", string path = "") {
         this.name = name;
+        this.artist = artist;
         this.path = path;
     }
 }
@@ -59,13 +61,15 @@ public class RecordInfo {
         foreach (FileInfo[] fileInfos in listOfFileInfos) {
             foreach (FileInfo fileInfo in fileInfos) {
                 TagLib.File file = TagLib.File.Create(fileInfo.FullName);
-                string artist = file.Tag.FirstPerformer;
-                string album = file.Tag.Album;
-                string song = file.Tag.Title;
+                string artist = file.Tag.FirstPerformer != null ? file.Tag.FirstPerformer : "Unknown";
+                string album = file.Tag.Album != null ? file.Tag.Album : "Unknown";
+                string song = file.Tag.Title != null ? file.Tag.Title : fileInfo.Name;
                 byte[] image = file.Tag.Pictures.Length > 0 ? file.Tag.Pictures[0].Data.Data : new byte[0];
-                string key = album != null ? album : artist;
+                string key = album;
                 if (albums.ContainsKey(key)) {
-                    ((ArrayList)(((object[])albums[key])[3])).Add(new Song(song, fileInfo.FullName));
+                    object[] value = (object[])albums[key];
+                    ArrayList songList = (ArrayList)(value[3]);
+                    songList.Add(new Song(song, fileInfo.FullName));
                 } else if (total < limit) {
                     total++;
                     ArrayList songList = new ArrayList();

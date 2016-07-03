@@ -3,27 +3,32 @@ using System.Collections;
 using System.IO;
 
 public class Util {
+    public static string CONFIG_PATH = "playmusic3d.cfg";
     private static bool configInitialized = false;
     private static Hashtable configs = new Hashtable();
 
     public static void InitializeConfig () {
-        if (!configInitialized) {
-            configInitialized = true;
-            string path = "playmusic3d.cfg";
-            if (File.Exists(path)) {
-                string[] configContents = File.ReadAllLines(path);
-                foreach (string entry in configContents) {
-                    string[] pair = entry.Split('=');
-                    configs.Add(pair[0], pair[1]);
-                }
-            } else {
-                // TODO: Make a new config file
+        if (File.Exists(CONFIG_PATH)) {
+            string[] configContents = File.ReadAllLines(CONFIG_PATH);
+            foreach (string entry in configContents) {
+                string[] pair = entry.Split('=');
+                configs.Add(pair[0], pair[1]);
             }
+            configInitialized = true;
         }
     }
 
+    public static void CreateConfig (string config) {
+        StreamWriter writer = new StreamWriter(File.Create(CONFIG_PATH));
+        writer.WriteLine(config);
+        writer.Close();
+    }
+
+    public static bool IsConfigInitialized () {
+        return configInitialized;
+    }
+
     public static string GetConfigValue (string key) {
-        InitializeConfig();
         return (string)configs[key];
     }
 
