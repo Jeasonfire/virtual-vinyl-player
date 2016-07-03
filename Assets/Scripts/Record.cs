@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.IO;
 
 public class RecordInfo {
     public string artist;
@@ -50,14 +51,16 @@ public class Record : MonoBehaviour {
     void Start () {
         Texture2D frontTexture = LoadTexture(info.frontPath);
         if (frontTexture == null) {
-            frontTexture = TextToTextureRenderer.RenderText(textRendererPrefab, info.artist + "\n" + info.name, new Color(1, 1, 1));
+            frontTexture = TextToTextureRenderer.RenderText(textRendererPrefab, info.artist + "\n" + info.name, new Color(1, 1, 1), new Color(0, 0, 0));
         }
 
         string songs = info.name + ":";
         for (int i = 0; i < info.songs.Length; i++) {
             songs += "\n" + i + ". " + info.songs[i];
         }
-        Texture2D backTexture = TextToTextureRenderer.RenderText(textRendererPrefab, songs, Util.GetAverageColorFromTexture(frontTexture));
+        Color backColor = Util.GetAverageColorFromTexture(frontTexture);
+        Texture2D backTexture = TextToTextureRenderer.RenderText(textRendererPrefab, songs, backColor, 
+            Util.GetBrightnessFromColor(backColor) < 0.5 ? new Color(1f, 1f, 1f) : new Color(0, 0, 0));
 
         // Material indices: 0 - back, 1 - front (cover)
         meshRenderer.materials[0].mainTexture = backTexture;
@@ -89,9 +92,16 @@ public class Record : MonoBehaviour {
         meshTransform.localEulerAngles = new Vector3(0, meshSpin, 0);
     }
 
-    private Texture2D LoadTexture (string name) {
-        // TODO: This should look up directories given by the user
-        return null; 
+    private Texture2D LoadTexture (string path) {
+        string fullPath = Util.GetConfigValue("source") + path;
+        Texture2D result = null;
+        byte[] data;
+        if (File.Exists(fullPath)) {
+            data = File.ReadAllBytes(fullPath);
+            result = new Texture2D(1, 1);
+            result.LoadImage(data);
+        }
+        return result; 
     }
 
     public void Flip () {

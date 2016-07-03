@@ -21,12 +21,16 @@ public class RecordsManager : MonoBehaviour {
     private bool canSpin = true;
 
     void Start() {
-        RecordInfo[] library = RecordInfo.LoadDummyRecords(100);
+        RecordInfo[] library = RecordInfo.LoadDummyRecords(71);
         
         savedSelectedRecords = new int[boxes.Length];
         records = new Record[MAX_RECORDS_PER_BOX * boxes.Length];
         LoadRecordLibrary(library);
-        Unselect();
+
+        currentlySelectedRecord = RecordsInBox(0) - 1;
+        for (int i = 1; i < boxes.Length; i++) {
+            savedSelectedRecords[i] = RecordsInBox(i) - 1;
+        }
     }
 	
 	void Update () {
@@ -82,7 +86,7 @@ public class RecordsManager : MonoBehaviour {
             SetSpringValue(selectedRecord.GetComponent<HingeJoint>(), 500, 0);
             selectedRecord.SetSelected(true);
             cam.targetRotation.x = 0;
-            cam.targetFov = 70 - 23 * ((float)currentlySelectedRecord / MAX_RECORDS_PER_BOX);
+            cam.targetFov = 47 + 23 * ((float)currentlySelectedRecord / MAX_RECORDS_PER_BOX);
         }
     }
 
@@ -90,22 +94,22 @@ public class RecordsManager : MonoBehaviour {
         Record selectedRecord = GetRecordAt(currentlySelectedRecord);
         if (selectedRecord != null) {
             selected = false;
-            SetSpringValue(selectedRecord.GetComponent<HingeJoint>(), 20, 35);
+            SetSpringValue(selectedRecord.GetComponent<HingeJoint>(), 20, 50);
             selectedRecord.SetSelected(false);
             cam.targetRotation.x = 40;
             cam.targetFov = 80;
         }
     }
 
-    void ScrollRecords(bool backwards = false, int iterations = 0) {
+    void ScrollRecords(bool backwards = false, int iterations = 1) {
         int previouslySelected = currentlySelectedRecord;
-        int boxSize = Mathf.Min(MAX_RECORDS_PER_BOX, amountOfRecords);
-        currentlySelectedRecord = Mathf.Clamp(currentlySelectedRecord + (backwards ? -1 : 1), 0, boxSize - 1);
+        int boxSize = RecordsInBox(currentlySelectedBox);
+        currentlySelectedRecord = Mathf.Clamp(currentlySelectedRecord + (backwards ? 1 : -1), 0, boxSize - 1);
         if (previouslySelected != currentlySelectedRecord) {
-            int direction = previouslySelected > currentlySelectedRecord ? 1 : -1;
+            int direction = previouslySelected > currentlySelectedRecord ? -1 : 1;
             Record previous = GetRecordAt(previouslySelected);
             if (previous != null) {
-                SetSpringValue(previous.GetComponent<HingeJoint>(), 20, 35 * direction);
+                SetSpringValue(previous.GetComponent<HingeJoint>(), 20, 50 * direction);
                 previous.SetSelected(false);
             }
             
@@ -113,7 +117,7 @@ public class RecordsManager : MonoBehaviour {
         }
 
         // Do the whole thing again if there are iterations and space
-        if (currentlySelectedRecord > 0 && currentlySelectedRecord < boxSize - 1 && iterations > 0) {
+        if (currentlySelectedRecord > 0 && currentlySelectedRecord < boxSize - 1 && iterations > 1) {
             ScrollRecords(backwards, iterations - 1);
         }
     }
@@ -144,7 +148,21 @@ public class RecordsManager : MonoBehaviour {
     }
 
     Record GetRecordAt (int index) {
-        return records[(Mathf.Clamp(index, 0, MAX_RECORDS_PER_BOX - 1) + currentlySelectedBox * MAX_RECORDS_PER_BOX) % (MAX_RECORDS_PER_BOX * boxes.Length)];
+        return GetRecordAt (index, currentlySelectedBox);
+    }
+
+    Record GetRecordAt (int index, int boxIndex) {
+        return records[(Mathf.Clamp(index, 0, MAX_RECORDS_PER_BOX - 1) + boxIndex * MAX_RECORDS_PER_BOX) % (MAX_RECORDS_PER_BOX * boxes.Length)];
+    }
+
+    int RecordsInBox (int boxIndex) {
+        int total = 0;
+        for (int i = 0; i < MAX_RECORDS_PER_BOX; i++) {
+            if (GetRecordAt(i, boxIndex) != null) {
+                total++;
+            }
+        }
+        return total;
     }
 
     void LoadRecordLibrary (RecordInfo[] infos) {
@@ -159,7 +177,7 @@ public class RecordsManager : MonoBehaviour {
         } else {
             Transform box = boxes[amountOfRecords / MAX_RECORDS_PER_BOX].transform;
 
-            float recordOffset = (1.0f - (float)(amountOfRecords % MAX_RECORDS_PER_BOX) / MAX_RECORDS_PER_BOX) * 0.75f - 0.45f;
+            float recordOffset = ((float)(amountOfRecords % MAX_RECORDS_PER_BOX) / MAX_RECORDS_PER_BOX) * 0.7f - 0.4f;
             Vector3 positionOffset = new Vector3(recordOffset, 0, 0);
 
             GameObject newRecordObject = (GameObject)Instantiate(recordTemplate, box.position + positionOffset, recordTemplate.transform.rotation);

@@ -8,11 +8,12 @@ public class TextToTextureRenderer : MonoBehaviour {
     public Camera textCamera;
     public TextMesh textMesh;
 
-    public static Texture2D RenderText (GameObject textRendererPrefab, string text, Color bgColor) {
+    public static Texture2D RenderText (GameObject textRendererPrefab, string text, Color bgColor, Color textColor) {
         if (textRenderer == null) {
             textRenderer = Instantiate<GameObject>(textRendererPrefab).GetComponent<TextToTextureRenderer>();
         }
         textRenderer.textCamera.backgroundColor = bgColor;
+        textRenderer.textMesh.GetComponent<MeshRenderer>().material.color = textColor;
         textRenderer.textMesh.text = text;
         textRenderer.textCamera.Render();
 
