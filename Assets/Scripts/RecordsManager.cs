@@ -52,18 +52,22 @@ public class RecordsManager : MonoBehaviour {
         if (boxScrollAmount != 0 && canScrollBoxes && !selected) {
             canScrollBoxes = false;
             scrollTime = Time.fixedTime;
-            savedSelectedRecords[currentlySelectedBox] = currentlySelectedRecord;
             ScrollBoxes(boxScrollAmount < 0);
-            currentlySelectedRecord = savedSelectedRecords[currentlySelectedBox];
         }
 
         if (!Input.GetButton("Action (Primary)")) {
             canSelect = true;
         }
         if (Input.GetButton("Action (Primary)") && canSelect) {
+            bool shouldSelect = true;
+            int boxIndex = GetBoxIndexAtMousePosition();
+            if (boxIndex >= 0 && currentlySelectedBox != boxIndex) {
+                ScrollBoxes(currentlySelectedBox > boxIndex, Mathf.Abs(boxIndex - currentlySelectedBox));
+                shouldSelect = false;
+            }
             if (selected) {
                 Unselect();
-            } else {
+            } else if (shouldSelect) {
                 Select();
             }
             canSelect = false;
@@ -109,6 +113,10 @@ public class RecordsManager : MonoBehaviour {
     }
 
     void ScrollRecords(bool backwards = false, int iterations = 1) {
+        if (iterations < 1) {
+            return;
+        }
+
         int previouslySelected = currentlySelectedRecord;
         int boxSize = RecordsInBox(currentlySelectedBox);
         currentlySelectedRecord = Mathf.Clamp(currentlySelectedRecord + (backwards ? 1 : -1), 0, boxSize - 1);
@@ -130,7 +138,13 @@ public class RecordsManager : MonoBehaviour {
         }
     }
 
-    void ScrollBoxes (bool backwards = false, int iterations = 0) {
+    void ScrollBoxes (bool backwards = false, int iterations = 1) {
+        if (iterations < 1) {
+            return;
+        }
+
+        savedSelectedRecords[currentlySelectedBox] = currentlySelectedRecord;
+
         int previouslySelected = currentlySelectedBox;
         int tempCurrentlySelected = Mathf.Clamp(currentlySelectedBox + (backwards ? -1 : 1), 0, boxes.Length - 1);
         if (previouslySelected != tempCurrentlySelected) {
@@ -142,8 +156,10 @@ public class RecordsManager : MonoBehaviour {
             cam.targetPosition += deltaPos;
         }
 
+        currentlySelectedRecord = savedSelectedRecords[currentlySelectedBox];
+
         // Do the whole thing again if there are iterations and space
-        if (currentlySelectedBox > 0 && currentlySelectedBox < boxes.Length - 1 && iterations > 0) {
+        if (currentlySelectedBox > 0 && currentlySelectedBox < boxes.Length - 1 && iterations > 1) {
             ScrollBoxes(backwards, iterations - 1);
         }
     }
@@ -161,6 +177,35 @@ public class RecordsManager : MonoBehaviour {
 
     Record GetRecordAt (int index, int boxIndex) {
         return records[(Mathf.Clamp(index, 0, MAX_RECORDS_PER_BOX - 1) + boxIndex * MAX_RECORDS_PER_BOX) % (MAX_RECORDS_PER_BOX * boxes.Length)];
+    }
+
+    int GetBoxIndexAtMousePosition () {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        BoxID result;
+        Physics.Raycast(ray, out hit, 10);
+        if (hit.collider != null && (result = hit.collider.GetComponent<BoxID>()) != null) {
+            return result.id;
+        }
+        return -1;
+    }
+
+    int GetRecordIndexByRecord (Record record) {
+        for (int i = 0; i < records.Length; i++) {
+            if (records[i] == record) {
+                return i % MAX_RECORDS_PER_BOX;
+            }
+        }
+        return -1;
+    }
+
+    int GetBoxIndexByRecord (Record record) {
+        for (int i = 0; i < records.Length; i++) {
+            if (records[i] == record) {
+                return i / MAX_RECORDS_PER_BOX;
+            }
+        }
+        return -1;
     }
 
     int RecordsInBox (int boxIndex) {
