@@ -14,8 +14,11 @@ public class RecordsManager : MonoBehaviour {
     private int currentlySelectedBox = 0;
 
     private float scrollTime = 0;
+    private bool selected = false;
     private bool canScrollRecords = true;
     private bool canScrollBoxes = true;
+    private bool canSelect = true;
+    private bool canSpin = true;
 
     void Start() {
         RecordInfo[] library = RecordInfo.LoadDummyRecords(100);
@@ -34,13 +37,13 @@ public class RecordsManager : MonoBehaviour {
             canScrollBoxes = true;
         }
         int scrollAmount = Mathf.RoundToInt(Input.GetAxis("Mouse ScrollWheel") * 10 - Input.GetAxis("Vertical"));
-        if (scrollAmount != 0 && canScrollRecords) {
+        if (scrollAmount != 0 && canScrollRecords && !selected) {
             canScrollRecords = false;
             scrollTime = Time.fixedTime;
             ScrollRecords(scrollAmount > 0);
         }
         float boxScrollAmount = Input.GetAxis("Horizontal");
-        if (boxScrollAmount != 0 && canScrollBoxes) {
+        if (boxScrollAmount != 0 && canScrollBoxes && !selected) {
             canScrollBoxes = false;
             scrollTime = Time.fixedTime;
             savedSelectedRecords[currentlySelectedBox] = currentlySelectedRecord;
@@ -48,27 +51,49 @@ public class RecordsManager : MonoBehaviour {
             currentlySelectedRecord = savedSelectedRecords[currentlySelectedBox];
         }
 
-        if (Input.GetAxis("Action (Primary)") != 0) {
-            Select();
+        if (!Input.GetButton("Action (Primary)")) {
+            canSelect = true;
         }
-        if (Input.GetAxis("Action (Secondary)") != 0) {
-            Unselect();
+        if (Input.GetButton("Action (Primary)") && canSelect) {
+            if (selected) {
+                Unselect();
+            } else {
+                Select();
+            }
+            canSelect = false;
+        }
+        
+        if (!Input.GetButton("Action (Secondary)")) {
+            canSpin = true;
+        }
+        if (Input.GetButton("Action (Secondary)") && canSpin && selected) {
+            Record selectedRecord = GetRecordAt(currentlySelectedRecord);
+            if (selectedRecord != null) {
+                selectedRecord.Flip();
+            }
+            canSpin = false;
         }
     }
 
     void Select () {
         Record selectedRecord = GetRecordAt(currentlySelectedRecord);
         if (selectedRecord != null) {
-            SetSpringValue(selectedRecord.GetComponent<HingeJoint>(), 100, 0);
+            selected = true;
+            SetSpringValue(selectedRecord.GetComponent<HingeJoint>(), 500, 0);
             selectedRecord.SetSelected(true);
+            cam.targetRotation.x = 0;
+            cam.targetFov = 70 - 23 * ((float)currentlySelectedRecord / MAX_RECORDS_PER_BOX);
         }
     }
 
     void Unselect () {
         Record selectedRecord = GetRecordAt(currentlySelectedRecord);
         if (selectedRecord != null) {
+            selected = false;
             SetSpringValue(selectedRecord.GetComponent<HingeJoint>(), 20, 35);
             selectedRecord.SetSelected(false);
+            cam.targetRotation.x = 40;
+            cam.targetFov = 80;
         }
     }
 

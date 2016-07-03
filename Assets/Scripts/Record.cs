@@ -37,24 +37,27 @@ public class Record : MonoBehaviour {
     public MeshRenderer meshRenderer;
     // This info will only be used in debug situations (actual infos are filled out at runtime)
     public RecordInfo info = new RecordInfo("The Recorders", "A Record", "", new string[] { "The Only Song" });
+    public float spinTime = 0.25f;
     public float riseTime = 1f;
     public float lowerTime = 1f;
     public float riseHeight = 0.25f;
 
     private float meshHeight = 0;
     private float targetMeshHeight = 0;
+    private float meshSpin = 0;
+    private float targetMeshSpin = 0;
 
     void Start () {
+        Texture2D frontTexture = LoadTexture(info.frontPath);
+        if (frontTexture == null) {
+            frontTexture = TextToTextureRenderer.RenderText(textRendererPrefab, info.artist + "\n" + info.name, new Color(1, 1, 1));
+        }
+
         string songs = info.name + ":";
         for (int i = 0; i < info.songs.Length; i++) {
             songs += "\n" + i + ". " + info.songs[i];
         }
-        Texture backTexture = TextToTextureRenderer.RenderText(textRendererPrefab, songs);
-
-        Texture frontTexture = LoadTexture(info.frontPath);
-        if (frontTexture == null) {
-            frontTexture = TextToTextureRenderer.RenderText(textRendererPrefab, info.artist + "\n" + info.name);
-        }
+        Texture2D backTexture = TextToTextureRenderer.RenderText(textRendererPrefab, songs, Util.GetAverageColorFromTexture(frontTexture));
 
         // Material indices: 0 - back, 1 - front (cover)
         meshRenderer.materials[0].mainTexture = backTexture;
@@ -74,14 +77,35 @@ public class Record : MonoBehaviour {
                 meshHeight = targetMeshHeight;
             }
         }
+        if (meshSpin != targetMeshSpin) {
+            float delta = targetMeshSpin - meshSpin;
+            float sign = Mathf.Sign(delta);
+            meshSpin += delta * Time.deltaTime / spinTime;
+            if (targetMeshSpin - meshSpin < 0.5 || sign != Mathf.Sign(targetMeshSpin - meshSpin)) {
+                meshSpin = targetMeshSpin;
+            }
+        }
         meshTransform.localPosition = new Vector3(0, meshHeight, 0);
+        meshTransform.localEulerAngles = new Vector3(0, meshSpin, 0);
     }
 
-    private Texture LoadTexture (string name) {
-        return Resources.Load("Covers/" + name) as Texture;
+    private Texture2D LoadTexture (string name) {
+        // TODO: This should look up directories given by the user
+        return null; 
+    }
+
+    public void Flip () {
+        targetMeshSpin += 180;
     }
 
     public void SetSelected (bool selected) {
         targetMeshHeight = selected ? riseHeight : 0;
+        if (!selected && targetMeshSpin % 360 != 0) {
+            targetMeshSpin += 180;
+        }
+    }
+
+    public bool IsSelected () {
+        return riseHeight != 0 && targetMeshHeight == riseHeight;
     }
 }
