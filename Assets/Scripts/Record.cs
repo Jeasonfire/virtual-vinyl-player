@@ -5,6 +5,10 @@ public class Record : MonoBehaviour {
     public GameObject textRendererPrefab;
     public Transform meshTransform;
     public MeshRenderer meshRenderer;
+    public Rigidbody body;
+    public AudioSource audioSource;
+    public AudioClip[] slapSounds;
+
     // This info will only be used in debug situations (actual infos are filled out at runtime)
     public RecordInfo info = new RecordInfo("The Recorders", "A Record", new byte[0], new Song[] { new Song("The Only Song") });
     public float spinTime = 0.25f;
@@ -72,6 +76,11 @@ public class Record : MonoBehaviour {
         }
     }
 
+    public void PlaySlapSound (float volume) {
+        AudioClip clip = slapSounds[Random.Range(0, slapSounds.Length)];
+        audioSource.PlayOneShot(clip, 0.1f * volume);
+    }
+
     public void Flip () {
         targetMeshSpin += 180;
     }
@@ -85,5 +94,17 @@ public class Record : MonoBehaviour {
 
     public bool IsSelected () {
         return riseHeight != 0 && targetMeshHeight == riseHeight;
+    }
+
+    void OnCollisionEnter (Collision collision) {
+        Vector3 highestPoint = new Vector3();
+        foreach (ContactPoint contactPoint in collision.contacts) {
+            if (highestPoint.y < contactPoint.point.y) {
+                highestPoint = contactPoint.point;
+            }
+        }
+        highestPoint.z = transform.position.z;
+        audioSource.transform.position = highestPoint;
+        PlaySlapSound(Mathf.Min(Mathf.Pow(collision.relativeVelocity.magnitude / 1.5f, 2), 2f));
     }
 }

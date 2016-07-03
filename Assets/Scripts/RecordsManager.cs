@@ -94,8 +94,12 @@ public class RecordsManager : MonoBehaviour {
     void Unselect () {
         Record selectedRecord = GetRecordAt(currentlySelectedRecord);
         if (selectedRecord != null) {
+            if (selected) {
+                SetSpringValue(selectedRecord.GetComponent<HingeJoint>(), 30, 50);
+            } else {
+                SetSpringValue(selectedRecord.GetComponent<HingeJoint>(), 20, 50);
+            }
             selected = false;
-            SetSpringValue(selectedRecord.GetComponent<HingeJoint>(), 20, 50);
             selectedRecord.SetSelected(false);
             cam.targetRotation.x = 40;
             cam.targetFov = 80;

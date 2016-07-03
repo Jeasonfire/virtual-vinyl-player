@@ -29,6 +29,9 @@ public class Util {
     }
 
     public static string GetConfigValue (string key) {
+        if (!IsConfigInitialized()) {
+            InitializeConfig();
+        }
         return (string)configs[key];
     }
 
