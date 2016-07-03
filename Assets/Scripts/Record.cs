@@ -1,43 +1,12 @@
 ﻿using UnityEngine;
 using System.IO;
 
-public class RecordInfo {
-    public string artist;
-    public string name;
-    public string frontPath;
-    public string[] songs;
-
-    public RecordInfo (string artist, string name, string frontPath, string[] songs) {
-        this.artist = artist;
-        this.name = name;
-        this.frontPath = frontPath;
-        this.songs = songs;
-    }
-
-    public string GetFullName () {
-        return artist + " - " + name;
-    }
-
-    public static RecordInfo[] LoadDummyRecords (int amount) {
-        string[] songs = new string[12];
-        for (int i = 0; i < songs.Length; i++) {
-            songs[i] = "Song #" + i;
-        }
-
-        RecordInfo[] records = new RecordInfo[amount];
-        for (int i = 0; i < records.Length; i++) {
-            records[i] = new RecordInfo("Temp Artist", "Temp Album #" + i, "", songs);
-        }
-        return records;
-    }
-}
-
 public class Record : MonoBehaviour {
     public GameObject textRendererPrefab;
     public Transform meshTransform;
     public MeshRenderer meshRenderer;
     // This info will only be used in debug situations (actual infos are filled out at runtime)
-    public RecordInfo info = new RecordInfo("The Recorders", "A Record", "", new string[] { "The Only Song" });
+    public RecordInfo info = new RecordInfo("The Recorders", "A Record", new byte[0], new Song[] { new Song("The Only Song") });
     public float spinTime = 0.25f;
     public float riseTime = 1f;
     public float lowerTime = 1f;
@@ -49,18 +18,19 @@ public class Record : MonoBehaviour {
     private float targetMeshSpin = 0;
 
     void Start () {
-        Texture2D frontTexture = LoadTexture(info.frontPath);
+        Texture2D frontTexture = LoadTexture();
         if (frontTexture == null) {
-            frontTexture = TextToTextureRenderer.RenderText(textRendererPrefab, info.artist + "\n" + info.name, new Color(1, 1, 1), new Color(0, 0, 0));
+            Color bgColor = Random.ColorHSV();
+            Color textColor = Util.GetOverlayColor(bgColor);
+            frontTexture = TextToTextureRenderer.RenderText(textRendererPrefab, info.artist + "\n" + info.name, bgColor, textColor);
         }
 
-        string songs = info.name + ":";
+        string songs = "<i>" + info.name + (info.name != null ? "</i> by <i>" + info.artist + ":\n" : "") + "</i>";
         for (int i = 0; i < info.songs.Length; i++) {
-            songs += "\n" + i + ". " + info.songs[i];
+            songs += "• " + info.songs[i].name + "\n";
         }
         Color backColor = Util.GetAverageColorFromTexture(frontTexture);
-        Texture2D backTexture = TextToTextureRenderer.RenderText(textRendererPrefab, songs, backColor, 
-            Util.GetBrightnessFromColor(backColor) < 0.5 ? new Color(1f, 1f, 1f) : new Color(0, 0, 0));
+        Texture2D backTexture = TextToTextureRenderer.RenderText(textRendererPrefab, songs, backColor, Util.GetOverlayColor(backColor));
 
         // Material indices: 0 - back, 1 - front (cover)
         meshRenderer.materials[0].mainTexture = backTexture;
@@ -92,16 +62,14 @@ public class Record : MonoBehaviour {
         meshTransform.localEulerAngles = new Vector3(0, meshSpin, 0);
     }
 
-    private Texture2D LoadTexture (string path) {
-        string fullPath = Util.GetConfigValue("source") + path;
-        Texture2D result = null;
-        byte[] data;
-        if (File.Exists(fullPath)) {
-            data = File.ReadAllBytes(fullPath);
-            result = new Texture2D(1, 1);
-            result.LoadImage(data);
+    private Texture2D LoadTexture () {
+        if (info.imageData.Length > 0) {
+            Texture2D result = new Texture2D(1, 1);
+            result.LoadImage(info.imageData);
+            return result;
+        } else {
+            return null;
         }
-        return result; 
     }
 
     public void Flip () {

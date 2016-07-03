@@ -199,9 +199,10 @@ MonoBehaviour:
   textRendererPrefab: {fileID: 158772, guid: c1770f1c1cc8dab449d28a54e5b23ae9, type: 2}
   meshTransform: {fileID: 429368}
   meshRenderer: {fileID: 2360860}
+  spinTime: 0.075
   riseTime: 0.25
   lowerTime: 0.5
-  riseHeight: 1.4
+  riseHeight: 1.425
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

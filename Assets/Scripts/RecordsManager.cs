@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
+using System.Net;
 
 public class RecordsManager : MonoBehaviour {
-    public const int MAX_RECORDS_PER_BOX = 20;
+    public const int MAX_RECORDS_PER_BOX = 8;
 
     public GameObject recordTemplate;
     public GameObject[] boxes;
@@ -21,7 +22,7 @@ public class RecordsManager : MonoBehaviour {
     private bool canSpin = true;
 
     void Start() {
-        RecordInfo[] library = RecordInfo.LoadDummyRecords(71);
+        RecordInfo[] library = RecordInfo.LoadUserLibrary(boxes.Length * MAX_RECORDS_PER_BOX);
         
         savedSelectedRecords = new int[boxes.Length];
         records = new Record[MAX_RECORDS_PER_BOX * boxes.Length];
@@ -177,7 +178,7 @@ public class RecordsManager : MonoBehaviour {
         } else {
             Transform box = boxes[amountOfRecords / MAX_RECORDS_PER_BOX].transform;
 
-            float recordOffset = ((float)(amountOfRecords % MAX_RECORDS_PER_BOX) / MAX_RECORDS_PER_BOX) * 0.7f - 0.4f;
+            float recordOffset = ((float)(amountOfRecords % MAX_RECORDS_PER_BOX) / MAX_RECORDS_PER_BOX) * 0.8f - 0.4f;
             Vector3 positionOffset = new Vector3(recordOffset, 0, 0);
 
             GameObject newRecordObject = (GameObject)Instantiate(recordTemplate, box.position + positionOffset, recordTemplate.transform.rotation);

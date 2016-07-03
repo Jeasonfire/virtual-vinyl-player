@@ -46,4 +46,8 @@ public class Util {
     public static float GetBrightnessFromColor (Color color) {
         return 0.299f * color.r + 0.587f * color.g + 0.114f * color.b;
     }
+
+    public static Color GetOverlayColor (Color color) {
+        return GetBrightnessFromColor(color) < 0.5 ? new Color(1, 1, 1) : new Color(0, 0, 0);
+    }
 }
