@@ -23,7 +23,7 @@ public class Record : MonoBehaviour {
     private float targetMeshSpin = 0;
 
     void Start () {
-        Texture2D frontTexture = LoadTexture();
+        Texture2D frontTexture = Util.LoadTexture(info);
         if (frontTexture == null) {
             Color bgColor = Random.ColorHSV();
             Color textColor = Util.GetOverlayColor(bgColor);
@@ -67,16 +67,6 @@ public class Record : MonoBehaviour {
         meshTransform.localEulerAngles = new Vector3(0, meshSpin, 0);
     }
 
-    private Texture2D LoadTexture () {
-        if (info.imageData.Length > 0) {
-            Texture2D result = new Texture2D(1, 1);
-            result.LoadImage(info.imageData);
-            return result;
-        } else {
-            return null;
-        }
-    }
-
     public void PlaySlapSound (float volume = 1f) {
         AudioClip clip = slapSounds[Random.Range(0, slapSounds.Length)];
         audioSource.PlayOneShot(clip, 0.1f * volume);
@@ -88,7 +78,7 @@ public class Record : MonoBehaviour {
     }
 
     public void Flip () {
-        PlayWooshSound(2f);
+        PlayWooshSound(4f);
         targetMeshSpin += 180;
     }
 
@@ -97,7 +87,7 @@ public class Record : MonoBehaviour {
         if (!selected && targetMeshSpin % 360 != 0) {
             Flip();
         } else {
-            PlayWooshSound(2.5f);
+            PlayWooshSound(3f);
         }
     }
 

@@ -6,6 +6,7 @@ public class RecordsManager : MonoBehaviour {
 
     public GameObject recordTemplate;
     public GameObject[] boxes;
+    public RecordPlayer recordPlayer;
     public CameraManager cam;
     public Vector3 forward;
 
@@ -14,6 +15,9 @@ public class RecordsManager : MonoBehaviour {
     private int currentlySelectedRecord = 0;
     private int[] savedSelectedRecords;
     private int currentlySelectedBox = 0;
+
+    private bool interacting = true;
+    private float interactingStartedAt = 0;
 
     private float scrollTime = 0;
     private bool selected = false;
@@ -36,6 +40,10 @@ public class RecordsManager : MonoBehaviour {
     }
 	
 	void Update () {
+        if (!interacting) {
+            return;
+        }
+
         if (Input.GetAxis("Vertical") == 0 || (Input.GetAxis("Vertical") != 0 && Time.fixedTime - scrollTime > 0.5f)) {
             canScrollRecords = true;
         }
@@ -60,15 +68,29 @@ public class RecordsManager : MonoBehaviour {
         }
         if (Input.GetButton("Action (Primary)") && canSelect) {
             bool shouldSelect = true;
-            int boxIndex = GetBoxIndexAtMousePosition();
-            if (boxIndex >= 0 && currentlySelectedBox != boxIndex) {
-                ScrollBoxes(currentlySelectedBox > boxIndex, Mathf.Abs(boxIndex - currentlySelectedBox));
-                shouldSelect = false;
+            GameObject hovered = Util.GetHoveredGameObject();
+            if (hovered != null) {
+                BoxID boxID = hovered.GetComponent<BoxID>();
+                if (boxID != null) {
+                    int boxIndex = boxID.id;
+                    if (currentlySelectedBox != boxIndex) {
+                        ScrollBoxes(currentlySelectedBox > boxIndex, Mathf.Abs(boxIndex - currentlySelectedBox));
+                        shouldSelect = false;
+                    }
+                }
+                PlayButton play = hovered.GetComponent<PlayButton>();
+                if (play != null) {
+                    ChooseSong();
+                    shouldSelect = false;
+                }
             }
-            if (selected) {
-                Unselect();
-            } else if (shouldSelect) {
-                Select();
+            
+            if (shouldSelect) {
+                if (selected) {
+                    Unselect();
+                } else {
+                    Select();
+                }
             }
             canSelect = false;
         }
@@ -83,6 +105,32 @@ public class RecordsManager : MonoBehaviour {
             }
             canSpin = false;
         }
+
+        if (Input.GetButton("Action (Tertiary)") && Time.time - interactingStartedAt > 0.3) {
+            ChangeToRecordPlayer();
+        }
+    }
+
+    void ChangeToRecordPlayer () {
+        interacting = false;
+        recordPlayer.StartInteracting();
+    }
+
+    public void StartInteracting() {
+        interacting = true;
+        interactingStartedAt = Time.time;
+        cam.targetPosition = cam.GetDefaultPosition();
+        cam.targetPosition.z = transform.position.z + currentlySelectedBox * 1.5f;
+        cam.targetRotation = cam.GetDefaultRotation();
+        cam.targetRotation.y = 270;
+        cam.targetFov = cam.GetDefaultFov();
+    }
+
+    void ChooseSong () {
+        Record selectedRecord = GetRecordAt(currentlySelectedRecord);
+        if (selectedRecord != null) {
+            recordPlayer.LoadSong(selectedRecord.info);
+        }
     }
 
     void Select () {
@@ -92,7 +140,7 @@ public class RecordsManager : MonoBehaviour {
             SetSpringValue(selectedRecord.GetComponent<HingeJoint>(), 500, 0);
             selectedRecord.SetSelected(true);
             cam.targetRotation.x = 0;
-            float deltaFov = 23;
+            float deltaFov = 16;
             cam.targetFov = cam.GetDefaultFov() - deltaFov * (1f - (float)currentlySelectedRecord / MAX_RECORDS_PER_BOX);
         }
     }
@@ -177,35 +225,6 @@ public class RecordsManager : MonoBehaviour {
 
     Record GetRecordAt (int index, int boxIndex) {
         return records[(Mathf.Clamp(index, 0, MAX_RECORDS_PER_BOX - 1) + boxIndex * MAX_RECORDS_PER_BOX) % (MAX_RECORDS_PER_BOX * boxes.Length)];
-    }
-
-    int GetBoxIndexAtMousePosition () {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        BoxID result;
-        Physics.Raycast(ray, out hit, 10);
-        if (hit.collider != null && (result = hit.collider.GetComponent<BoxID>()) != null) {
-            return result.id;
-        }
-        return -1;
-    }
-
-    int GetRecordIndexByRecord (Record record) {
-        for (int i = 0; i < records.Length; i++) {
-            if (records[i] == record) {
-                return i % MAX_RECORDS_PER_BOX;
-            }
-        }
-        return -1;
-    }
-
-    int GetBoxIndexByRecord (Record record) {
-        for (int i = 0; i < records.Length; i++) {
-            if (records[i] == record) {
-                return i / MAX_RECORDS_PER_BOX;
-            }
-        }
-        return -1;
     }
 
     int RecordsInBox (int boxIndex) {

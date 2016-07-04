@@ -15,7 +15,7 @@ public class Song {
 
 public class RecordInfo {
     public static string[] supportedExtensions = new string[] {
-        "flac", "mp3", "mp4", "aiff", "aac", "ogg", "wav"
+        "wav", "mp3", "mp4", "m4a", "flac", "aif", "aiff"
     };
 
     public string artist;
@@ -69,11 +69,11 @@ public class RecordInfo {
                 if (albums.ContainsKey(key)) {
                     object[] value = (object[])albums[key];
                     ArrayList songList = (ArrayList)(value[3]);
-                    songList.Add(new Song(song, fileInfo.FullName));
-                } else if (total < limit) {
+                    songList.Add(new Song(song, artist, fileInfo.FullName));
+                } else if (total < limit && image.Length > 0) {
                     total++;
                     ArrayList songList = new ArrayList();
-                    songList.Add(new Song(song, fileInfo.FullName));
+                    songList.Add(new Song(song, artist, fileInfo.FullName));
                     albums.Add(key, new object[] { artist, album, image, songList });
                 }
             }

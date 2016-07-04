@@ -1,15 +1,37 @@
 fileFormatVersion: 2
-guid: bd9464d642c0e9348a8761392ff706c5
-timeCreated: 1467631127
+guid: ef65212f06b05404988902f7588be564
+timeCreated: 1467585837
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Record Player Base
+    100004: Record Player Hand
+    100006: Record Player Hand Base
+    100008: Record Player Spinny Part
+    100010: Record Player Spinny Pin
     400000: //RootNode
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: Cube
+    400002: Record Player Base
+    400004: Record Player Hand
+    400006: Record Player Hand Base
+    400008: Record Player Spinny Part
+    400010: Record Player Spinny Pin
+    2300000: Record Player Base
+    2300002: Record Player Hand
+    2300004: Record Player Hand Base
+    2300006: Record Player Spinny Part
+    2300008: Record Player Spinny Pin
+    3300000: Record Player Base
+    3300002: Record Player Hand
+    3300004: Record Player Hand Base
+    3300006: Record Player Spinny Part
+    3300008: Record Player Spinny Pin
+    4300000: Record Player Hand
+    4300002: Record Player Hand Base
+    4300004: Record Player Spinny Part
+    4300006: Record Player Base
+    4300008: Record Player Spinny Pin
   materials:
     importMaterials: 1
     materialName: 0
