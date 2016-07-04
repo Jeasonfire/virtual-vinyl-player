@@ -5,6 +5,7 @@ public class Record : MonoBehaviour {
     public GameObject textRendererPrefab;
     public Transform meshTransform;
     public MeshRenderer meshRenderer;
+    public TextMesh playText;
     public Rigidbody body;
     public AudioSource audioSource;
     public AudioClip[] slapSounds;
@@ -32,7 +33,7 @@ public class Record : MonoBehaviour {
 
         string songs = "<i>" + info.name + (info.name != null ? "</i> by <i>" + info.artist + ":\n" : "") + "</i>";
         for (int i = 0; i < info.songs.Length; i++) {
-            songs += "• " + info.songs[i].name + "\n";
+            songs += (i + 1) + ". " + info.songs[i].name + "\n";
         }
         Color backColor = Util.GetAverageColorFromTexture(frontTexture);
         Texture2D backTexture = TextToTextureRenderer.RenderText(textRendererPrefab, songs, backColor, Util.GetOverlayColor(backColor));

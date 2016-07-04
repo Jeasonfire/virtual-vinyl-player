@@ -66,7 +66,7 @@ public class RecordsManager : MonoBehaviour {
         if (!Input.GetButton("Action (Primary)")) {
             canSelect = true;
         }
-        if (Input.GetButton("Action (Primary)") && canSelect) {
+        if (Input.GetButton("Action (Primary)") && canSelect && !recordPlayer.loadingSongs) {
             bool shouldSelect = true;
             GameObject hovered = Util.GetHoveredGameObject();
             if (hovered != null) {
@@ -106,13 +106,14 @@ public class RecordsManager : MonoBehaviour {
             canSpin = false;
         }
 
-        if (Input.GetButton("Action (Tertiary)") && Time.time - interactingStartedAt > 0.3) {
+        if (Input.GetButton("Action (Tertiary)") && !recordPlayer.loadingSongs && Time.time - interactingStartedAt > 0.3) {
             ChangeToRecordPlayer();
         }
     }
 
     void ChangeToRecordPlayer () {
         interacting = false;
+        Unselect();
         recordPlayer.StartInteracting();
     }
 
@@ -129,7 +130,7 @@ public class RecordsManager : MonoBehaviour {
     void ChooseSong () {
         Record selectedRecord = GetRecordAt(currentlySelectedRecord);
         if (selectedRecord != null) {
-            recordPlayer.LoadSong(selectedRecord.info);
+            recordPlayer.StartLoadingSong(selectedRecord);
         }
     }
 

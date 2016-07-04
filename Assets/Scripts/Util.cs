@@ -2,12 +2,17 @@
 using System.Collections;
 using System.IO;
 using System.Diagnostics;
+using System.Threading;
 
 public class Util : MonoBehaviour {
     public static string TEMP_SONG_PATH = ".temp-song.wav";
     public static string CONFIG_PATH = "playmusic3d.cfg";
     private static bool configInitialized = false;
     private static Hashtable configs = new Hashtable();
+
+    private static bool cleanedUp = true;
+    private static bool songLoaded = false;
+    private static Thread loadingThread;
 
     public static void InitializeConfig () {
         if (File.Exists(CONFIG_PATH)) {
@@ -37,7 +42,7 @@ public class Util : MonoBehaviour {
         return (string)configs[key];
     }
 
-    public static Texture2D LoadTexture(RecordInfo info) {
+    public static Texture2D LoadTexture (RecordInfo info) {
         if (info.imageData.Length > 0) {
             Texture2D result = new Texture2D(1, 1);
             result.LoadImage(info.imageData);
@@ -47,37 +52,50 @@ public class Util : MonoBehaviour {
         }
     }
 
-    public static void LoadTempSong(string path) {
-        Process process = new Process();
-        process.StartInfo.FileName = "ffmpeg";
-        process.StartInfo.Arguments = "-i \"" + path + "\" -y -nostdin " + TEMP_SONG_PATH;
-        process.StartInfo.CreateNoWindow = true;
-        process.StartInfo.UseShellExecute = false;
-        process.StartInfo.RedirectStandardOutput = true;
+    public static void LoadTempSong (string path) {
+        cleanedUp = false;
+        songLoaded = false;
+        loadingThread = new Thread(new ThreadStart(() => {
+            Process process = new Process();
+            process.StartInfo.FileName = "ffmpeg";
+            process.StartInfo.Arguments = "-i \"" + path + "\" -y -nostdin " + TEMP_SONG_PATH;
+            process.StartInfo.CreateNoWindow = true;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
 
-        process.Start();
-        process.WaitForExit();
-        process.Close();
+            process.Start();
+            process.WaitForExit();
+            process.Close();
 
-        File.SetAttributes(TEMP_SONG_PATH, FileAttributes.Hidden);
+            File.SetAttributes(TEMP_SONG_PATH, FileAttributes.Hidden);
+            songLoaded = true;
+        }));
+        loadingThread.Start();
+    }
+
+    public static void CleanupTempSongThreaded () {
+        Thread thread = new Thread(new ThreadStart(() => {
+            CleanupTempSong();
+        }));
+        thread.Start();
     }
 
     public static void CleanupTempSong () {
         while (File.Exists(TEMP_SONG_PATH)) {
             try {
                 File.Delete(TEMP_SONG_PATH);
-            } catch (IOException) { }
+                cleanedUp = true;
+            } catch (IOException) {
+            }
         }
     }
 
-    public static bool IsFileUnusable (string path) {
-        try {
-            File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None).Close();
-        } catch (IOException) {
-            UnityEngine.Debug.Log("Unacceptable!");
-            return true;
-        }
-        return false;
+    public static bool TempSongCleanedUp () {
+        return cleanedUp;
+    }
+
+    public static bool HasSongBeenLoaded () {
+        return songLoaded;
     }
 
     public static Color GetAverageColorFromTexture (Texture2D texture, float samplesX = 8, float samplesY = 8) {
@@ -113,5 +131,20 @@ public class Util : MonoBehaviour {
             result = hit.collider.gameObject;
         }
         return result;
+    }
+
+    public static void Log (string msg) {
+        UnityEngine.Debug.Log(msg);
+    }
+
+    public static void Err (string msg) {
+        UnityEngine.Debug.LogError(msg);    
+    }
+
+    void OnApplicationQuit () {
+        if (loadingThread != null && loadingThread.IsAlive) {
+            loadingThread.Abort();
+        }
+        CleanupTempSong();
     }
 }

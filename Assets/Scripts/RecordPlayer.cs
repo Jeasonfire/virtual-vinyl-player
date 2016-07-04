@@ -1,57 +1,69 @@
 ﻿using UnityEngine;
+using System.Collections;
+using System.Threading;
 
 public class RecordPlayer : MonoBehaviour {
-
+    /* Major things this  interacts with */
     public CameraManager cam;
     public RecordsManager recordsManager;
-
+    
+    /* Animatables */
     public HingeJoint spinnyThing;
     public Transform hand;
     public Transform handBase;
-
     public MeshRenderer recordRenderer;
+    public TextMesh recordPlayText;
 
+    /* Audio variables */
     public AudioSource mainAudioSource;
     public AudioSource crackleAudioSource;
     public AudioClip[] songs;
     public AudioClip crackle;
     public AudioClip crackleLoop;
-    public string status = "";
-
+    
+    /* Configurables */
     public float handSpeed = 30f;
     public float handAngleStart = 30f;
     public float handAngleEnd = 60f;
-
     public float startSilence = 4.5f;
 
-    private bool interacting = false;
-    private float interactingStartedAt = 0;
-    private bool justClicked = false;
-    private bool justSkipped = false;
+    /* Loading variables */
+    private RecordInfo loadingInfo;
+    public float loadingProgress = 0;
+    public bool loadingSongs = false;
+    private bool songsLoaded = false;
 
+    /* Private animation variables */
     private bool handUp = false;
     private bool playing = false;
     private bool prepared = false;
     private int currentSongIndex = 0;
     private float playedTime = 0;
 
+    /* Context sensitivity variables */
+    private bool interacting = false;
+    private float interactingStartedAt = 0;
+    private bool justClicked = false;
+    private bool justSkipped = false;
+
 	void Start () {
         crackleAudioSource.clip = crackleLoop;
         crackleAudioSource.loop = true;
-        crackleAudioSource.volume = 0.2f;
     }
 
 	void Update () {
+        /* Handle context */
         if (!interacting) {
             return;
         }
         if (Input.GetButton("Action (Tertiary)") && Time.time - interactingStartedAt > 0.3) {
             ChangeToRecordsManager();
         }
-        if (songs == null || songs.Length == 0) {
+        if (!songsLoaded) {
             return;
         }
 
+        /* Inputs */
         if (!Input.GetButton("Action (Primary)")) {
             justClicked = false;
         }
@@ -69,7 +81,7 @@ public class RecordPlayer : MonoBehaviour {
                 SetHandDown();
                 prepared = false;
                 if (HasHandReached(handAngleStart) && !playing) {
-                    crackleAudioSource.PlayOneShot(crackle, 5f);
+                    crackleAudioSource.PlayOneShot(crackle, 4f);
                     crackleAudioSource.PlayDelayed(crackle.length);
                     mainAudioSource.clip = songs[currentSongIndex];
                     while (mainAudioSource.clip == null && currentSongIndex < songs.Length) {
@@ -89,6 +101,7 @@ public class RecordPlayer : MonoBehaviour {
             }
         }
 
+        /* Animations */
         if (justSkipped) {
             SetHandDown();
         }
@@ -97,20 +110,21 @@ public class RecordPlayer : MonoBehaviour {
         }
         if (Input.GetButton("Action (Secondary)") && !justSkipped) {
             justSkipped = true;
-            SetHandUp();
-            playedTime += GetCurrentSongLength() * (1f - GetCurrentSongProgress());
+            if (prepared) {
+                StopPlaying();
+            } else {
+                SetHandUp();
+                playedTime += GetCurrentSongLength() * (1f - GetCurrentSongProgress());
+            }
         }
 
         // Hand Y rotation
         if (prepared && !playing) {
             SetHandYRotation(handAngleStart);
-            status = "starting";
         } else if (playing) {
             SetHandYRotation(handAngleStart + (handAngleEnd - handAngleStart) * GetSongsProgress());
-            status = "playing";
         } else {
             SetHandYRotation(0);
-            status = "returning";
         }
 
         // Hand Z rotation
@@ -133,6 +147,7 @@ public class RecordPlayer : MonoBehaviour {
         nr.z = Mathf.Clamp(nr.z, 170, 180);
         hand.eulerAngles = nr;
 
+        /* Audio management */
         // Song timer
         if (mainAudioSource.isPlaying) {
             playedTime += Time.deltaTime;
@@ -149,21 +164,18 @@ public class RecordPlayer : MonoBehaviour {
                 }
                 mainAudioSource.Play();
             } else {
-                SetSpinnyForce(0);
-                SetHandUp();
-                mainAudioSource.Stop();
-                crackleAudioSource.Stop();
-                playing = false;
-                prepared = false;
-                playedTime = 0;
-                currentSongIndex = 0;
+                StopPlaying();
             }
         }
         if (!prepared && !playing && HasHandReached(0)) {
             SetHandDown();
         }
     }
-    
+
+    /********************/
+    /* Context changing */
+    /********************/
+
     void ChangeToRecordsManager () {
         interacting = false;
         recordsManager.StartInteracting();
@@ -179,6 +191,10 @@ public class RecordPlayer : MonoBehaviour {
         cam.targetRotation.x = 49;
         cam.targetFov = 28;
     }
+
+    /***********/
+    /* Getters */
+    /***********/
 
     float GetCurrentSongLength () {
         return songs[currentSongIndex] == null ? 0 : songs[currentSongIndex].length;
@@ -228,6 +244,21 @@ public class RecordPlayer : MonoBehaviour {
         }
     }
 
+    /********************/
+    /* Animating things */
+    /********************/
+
+    void StopPlaying () {
+        SetSpinnyForce(0);
+        SetHandUp();
+        mainAudioSource.Stop();
+        crackleAudioSource.Stop();
+        playing = false;
+        prepared = false;
+        playedTime = 0;
+        currentSongIndex = 0;
+    }
+
     void SetHandUp () {
         handUp = true;
     }
@@ -264,27 +295,62 @@ public class RecordPlayer : MonoBehaviour {
         handBase.eulerAngles = newRotation;
     }
 
-    public void LoadSong (RecordInfo record) {
-        // Load songs
-        songs = new AudioClip[record.songs.Length];
-        for (int i = 0; i < record.songs.Length; i++) {
-            string path = record.songs[i].path;
-            Util.LoadTempSong(path);
-            WWW www = new WWW("file://" + Util.TEMP_SONG_PATH);
-            songs[i] = www.GetAudioClip(true);
-            // Hang until loading is done
-            while (songs[i].loadState != AudioDataLoadState.Loaded) {
-                if (www.error != null && www.error.Length > 0) {
-                    Debug.LogError(www.error);
-                    return;
-                }
-            }
-            // Hang until stuff is deleted
-            Util.CleanupTempSong();
-        }
-        Util.CleanupTempSong();
+    /******************/
+    /* Loading things */
+    /******************/
 
-        // Load art
-        recordRenderer.materials[1].mainTexture = Util.LoadTexture(record);
+    public void StartLoadingSong (Record record) {
+        loadingInfo = record.info;
+        if (recordPlayText != null) {
+            recordPlayText.text = "PLAY";
+        }
+        recordPlayText = record.playText;
+        StartCoroutine("LoadSongs");
+    }
+
+    public IEnumerator LoadSongs () {
+        // Load songs
+        AudioClip[] loadedSongs = new AudioClip[loadingInfo.songs.Length];
+        for (int i = 0; i < loadedSongs.Length; i++) {
+            loadedSongs[i] = null; 
+        }
+
+        songsLoaded = false;
+        loadingSongs = true;
+        for (int i = 0; i < loadingInfo.songs.Length; i++) {
+            // Progress
+            loadingProgress = (float)i / loadingInfo.songs.Length;
+            recordPlayText.text = (i + 1) + "/" + loadingInfo.songs.Length;
+            string path = loadingInfo.songs[i].path;
+
+            // Create temp file
+            Util.LoadTempSong(path);
+            while (!Util.HasSongBeenLoaded()) {
+                yield return null;
+            }
+
+            // Load from  temp file
+            WWW www = new WWW("file://" + Util.TEMP_SONG_PATH);
+            loadedSongs[i] = www.GetAudioClip(true, false, AudioType.WAV);
+            while (loadedSongs[i].loadState != AudioDataLoadState.Loaded) {
+                if (www.error != null) {
+                    Debug.LogError("WWW Error while loading '" + path + "':\n" + www.error);
+                }
+                yield return null;
+            }
+            loadedSongs[i].name = loadingInfo.songs[i].artist + " - " + loadingInfo.songs[i].name;
+
+            Util.CleanupTempSongThreaded();
+            while (!Util.TempSongCleanedUp()) {
+                yield return null;
+            }
+        }
+        // Load cover art
+        recordRenderer.materials[1].mainTexture = Util.LoadTexture(loadingInfo);
+
+        // Finished loading
+        songs = loadedSongs;
+        loadingSongs = false;
+        songsLoaded = true;
     }
 }

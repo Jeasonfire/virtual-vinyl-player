@@ -471,6 +471,7 @@ MonoBehaviour:
   textRendererPrefab: {fileID: 103540, guid: c1770f1c1cc8dab449d28a54e5b23ae9, type: 2}
   meshTransform: {fileID: 438818}
   meshRenderer: {fileID: 2332790}
+  playText: {fileID: 10217086}
   body: {fileID: 5471572}
   audioSource: {fileID: 8270954}
   slapSounds:

@@ -938,7 +938,7 @@ Transform:
   - {fileID: 453745400}
   - {fileID: 2090902798}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
 --- !u!1 &370397883
 GameObject:
   m_ObjectHideFlags: 0
@@ -1227,7 +1227,7 @@ AudioSource:
     serializedVersion: 2
     m_Curve:
     - time: 0
-      value: 1
+      value: 1.01
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -1832,7 +1832,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_Lightmapping: 4
-  m_BounceIntensity: 1
+  m_BounceIntensity: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
   m_AreaSize: {x: 1, y: 1}
@@ -2381,7 +2381,7 @@ Transform:
   m_Children:
   - {fileID: 567065755}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
 --- !u!1 &860311260
 GameObject:
   m_ObjectHideFlags: 0
@@ -3803,7 +3803,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 33.3858, y: -131.95349, z: 9.4268}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
 --- !u!1 &1241562807
 GameObject:
   m_ObjectHideFlags: 0
@@ -3914,7 +3914,7 @@ Transform:
   - {fileID: 404220539}
   - {fileID: 1301161012}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
 --- !u!114 &1297616478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3932,16 +3932,18 @@ MonoBehaviour:
   hand: {fileID: 131897074}
   handBase: {fileID: 131897074}
   recordRenderer: {fileID: 516356404}
+  recordPlayText: {fileID: 0}
   mainAudioSource: {fileID: 404220538}
   crackleAudioSource: {fileID: 1301161011}
   songs: []
   crackle: {fileID: 8300000, guid: 301bda3cabe2dc74897b4c4e0ea38707, type: 3}
   crackleLoop: {fileID: 8300000, guid: 40068c6afb54ac241a6eb47bc7443664, type: 3}
-  status: 
   handSpeed: 50
   handAngleStart: 38
   handAngleEnd: 58
-  startSilence: 4.5
+  startSilence: 3.5
+  loadingProgress: 0
+  loadingSongs: 0
 --- !u!1 &1301161010
 GameObject:
   m_ObjectHideFlags: 0
@@ -3969,7 +3971,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.75
+  m_Volume: 0.25
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -4382,7 +4384,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 6
   m_Type: 0
-  m_Color: {r: 1, g: 0.9423448, b: 0.8103448, a: 1}
+  m_Color: {r: 1, g: 0.836562, b: 0.60899997, a: 1}
   m_Intensity: 4
   m_Range: 10
   m_SpotAngle: 60
@@ -4402,7 +4404,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_Lightmapping: 4
-  m_BounceIntensity: 1
+  m_BounceIntensity: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
   m_AreaSize: {x: 1, y: 1}
@@ -4472,7 +4474,7 @@ Transform:
   - {fileID: 1309370462}
   - {fileID: 39025837}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
 --- !u!114 &1581553933
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4803,6 +4805,46 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1672016416}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1687291718
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1687291720}
+  - 114: {fileID: 1687291719}
+  m_Layer: 0
+  m_Name: Util
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1687291719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1687291718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea81d5680df35f5459b727cd277afaf1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1687291720
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1687291718}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
 --- !u!1 &1782714533
 GameObject:
   m_ObjectHideFlags: 0
@@ -5077,7 +5119,7 @@ Transform:
   m_Children:
   - {fileID: 415164351}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
 --- !u!1 &1847873621
 GameObject:
   m_ObjectHideFlags: 0
@@ -5166,7 +5208,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 40, y: -89.999794, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
 --- !u!114 &1847873627
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5660,7 +5702,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 6
   m_Type: 0
-  m_Color: {r: 1, g: 0.9423448, b: 0.8103448, a: 1}
+  m_Color: {r: 1, g: 0.836562, b: 0.60899997, a: 1}
   m_Intensity: 4
   m_Range: 10
   m_SpotAngle: 60
@@ -5680,7 +5722,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_Lightmapping: 4
-  m_BounceIntensity: 1
+  m_BounceIntensity: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
   m_AreaSize: {x: 1, y: 1}
