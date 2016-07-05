@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using System.IO;
 
-public class Record : MonoBehaviour {
-    public GameObject textRendererPrefab;
+public class RecordCase : MonoBehaviour {
     public Transform meshTransform;
     public MeshRenderer meshRenderer;
     public TextMesh playText;
@@ -11,8 +10,8 @@ public class Record : MonoBehaviour {
     public AudioClip[] slapSounds;
     public AudioClip[] wooshSounds;
 
-    // This info will only be used in debug situations (actual infos are filled out at runtime)
-    public RecordInfo info = new RecordInfo("The Recorders", "A Record", new byte[0], new Song[] { new Song("The Only Song") });
+    // This album instance will only be used in debug situations (actual albums are filled out at runtime)
+    public Album album = new Album("The Recorders", "A Record", new byte[0], new Song[0]);
     public float spinTime = 0.25f;
     public float riseTime = 1f;
     public float lowerTime = 1f;
@@ -24,19 +23,16 @@ public class Record : MonoBehaviour {
     private float targetMeshSpin = 0;
 
     void Start () {
-        Texture2D frontTexture = Util.LoadTexture(info);
+        Texture2D frontTexture = Util.LoadAlbumArt(album);
         if (frontTexture == null) {
-            Color bgColor = Random.ColorHSV();
-            Color textColor = Util.GetOverlayColor(bgColor);
-            frontTexture = TextToTextureRenderer.RenderText(textRendererPrefab, info.artist + "\n" + info.name, bgColor, textColor);
         }
 
-        string songs = "<i>" + info.name + (info.name != null ? "</i> by <i>" + info.artist + ":\n" : "") + "</i>";
-        for (int i = 0; i < info.songs.Length; i++) {
-            songs += (i + 1) + ". " + info.songs[i].name + "\n";
+        string songs = "<i>" + album.name + (album.name != null ? "</i> by <i>" + album.artist + ":\n" : "") + "</i>";
+        for (int i = 0; i < album.songs.Length; i++) {
+            songs += (i + 1) + ". " + album.songs[i].name + "\n";
         }
         Color backColor = Util.GetAverageColorFromTexture(frontTexture);
-        Texture2D backTexture = TextToTextureRenderer.RenderText(textRendererPrefab, songs, backColor, Util.GetOverlayColor(backColor));
+        Texture2D backTexture = TextToTextureRenderer.RenderText(songs, backColor, Util.GetOverlayColor(backColor));
 
         // Material indices: 0 - back, 1 - front (cover)
         meshRenderer.materials[0].mainTexture = backTexture;

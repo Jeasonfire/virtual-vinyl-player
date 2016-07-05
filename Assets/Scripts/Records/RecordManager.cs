@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Net;
+using System.Threading;
+using System.Collections;
 
-public class RecordsManager : MonoBehaviour {
+public class RecordManager : MonoBehaviour {
     public const int MAX_RECORDS_PER_BOX = 8;
 
     public GameObject recordTemplate;
@@ -10,7 +12,7 @@ public class RecordsManager : MonoBehaviour {
     public CameraManager cam;
     public Vector3 forward;
 
-    private Record[] records;
+    private RecordCase[] records;
     private int amountOfRecords;
     private int currentlySelectedRecord = 0;
     private int[] savedSelectedRecords;
@@ -27,16 +29,9 @@ public class RecordsManager : MonoBehaviour {
     private bool canSpin = true;
 
     void Start() {
-        RecordInfo[] library = RecordInfo.LoadUserLibrary(boxes.Length * MAX_RECORDS_PER_BOX);
-        
         savedSelectedRecords = new int[boxes.Length];
-        records = new Record[MAX_RECORDS_PER_BOX * boxes.Length];
-        LoadRecordLibrary(library);
-
-        currentlySelectedRecord = RecordsInBox(0) - 1;
-        for (int i = 1; i < boxes.Length; i++) {
-            savedSelectedRecords[i] = RecordsInBox(i) - 1;
-        }
+        records = new RecordCase[MAX_RECORDS_PER_BOX * boxes.Length];
+        StartCoroutine("LoadRecordLibrary");
     }
 	
 	void Update () {
@@ -99,7 +94,7 @@ public class RecordsManager : MonoBehaviour {
             canSpin = true;
         }
         if (Input.GetButton("Action (Secondary)") && canSpin && selected) {
-            Record selectedRecord = GetRecordAt(currentlySelectedRecord);
+            RecordCase selectedRecord = GetRecordAt(currentlySelectedRecord);
             if (selectedRecord != null) {
                 selectedRecord.Flip();
             }
@@ -128,14 +123,14 @@ public class RecordsManager : MonoBehaviour {
     }
 
     void ChooseSong () {
-        Record selectedRecord = GetRecordAt(currentlySelectedRecord);
+        RecordCase selectedRecord = GetRecordAt(currentlySelectedRecord);
         if (selectedRecord != null) {
             recordPlayer.StartLoadingSong(selectedRecord);
         }
     }
 
     void Select () {
-        Record selectedRecord = GetRecordAt(currentlySelectedRecord);
+        RecordCase selectedRecord = GetRecordAt(currentlySelectedRecord);
         if (selectedRecord != null) {
             selected = true;
             SetSpringValue(selectedRecord.GetComponent<HingeJoint>(), 500, 0);
@@ -147,7 +142,7 @@ public class RecordsManager : MonoBehaviour {
     }
 
     void Unselect () {
-        Record selectedRecord = GetRecordAt(currentlySelectedRecord);
+        RecordCase selectedRecord = GetRecordAt(currentlySelectedRecord);
         if (selectedRecord != null) {
             if (selected) {
                 SetSpringValue(selectedRecord.GetComponent<HingeJoint>(), 30, 50);
@@ -171,7 +166,7 @@ public class RecordsManager : MonoBehaviour {
         currentlySelectedRecord = Mathf.Clamp(currentlySelectedRecord + (backwards ? 1 : -1), 0, boxSize - 1);
         if (previouslySelected != currentlySelectedRecord) {
             int direction = previouslySelected > currentlySelectedRecord ? -1 : 1;
-            Record previous = GetRecordAt(previouslySelected);
+            RecordCase previous = GetRecordAt(previouslySelected);
             if (previous != null) {
                 SetSpringValue(previous.GetComponent<HingeJoint>(), 20, 50 * direction);
                 previous.SetSelected(false);
@@ -220,11 +215,11 @@ public class RecordsManager : MonoBehaviour {
         joint.spring = tempSpring;
     }
 
-    Record GetRecordAt (int index) {
+    RecordCase GetRecordAt (int index) {
         return GetRecordAt (index, currentlySelectedBox);
     }
 
-    Record GetRecordAt (int index, int boxIndex) {
+    RecordCase GetRecordAt (int index, int boxIndex) {
         return records[(Mathf.Clamp(index, 0, MAX_RECORDS_PER_BOX - 1) + boxIndex * MAX_RECORDS_PER_BOX) % (MAX_RECORDS_PER_BOX * boxes.Length)];
     }
 
@@ -238,27 +233,40 @@ public class RecordsManager : MonoBehaviour {
         return total;
     }
 
-    void LoadRecordLibrary (RecordInfo[] infos) {
-        foreach (RecordInfo info in infos) {
-            CreateRecord(info);
+    IEnumerator LoadRecordLibrary () {
+        AlbumLoader loader = new AlbumLoader(MAX_RECORDS_PER_BOX * boxes.Length);
+        loader.Load();
+        while (!loader.IsDone()) {
+            Album info;
+            if ((info = loader.PopLatestRecordInfo()) != null) {
+                CreateRecord(info);
+            }
+            yield return null;
         }
     }
 
-    void CreateRecord (RecordInfo info) {
+    private void CreateRecord (Album album) {
         if (amountOfRecords >= MAX_RECORDS_PER_BOX * boxes.Length) {
-            Debug.LogError("Tried to add record '" + info.GetFullName() + "' to a full box!");
+            Debug.LogError("Tried to add record '" + album.artist + " - " + album.name + "' to a full box!");
         } else {
-            Transform box = boxes[amountOfRecords / MAX_RECORDS_PER_BOX].transform;
+            int boxIndex = amountOfRecords / MAX_RECORDS_PER_BOX;
+            int recordIndex = amountOfRecords % MAX_RECORDS_PER_BOX;
+            Transform box = boxes[boxIndex].transform;
+            savedSelectedRecords[boxIndex] = recordIndex;
+            if (currentlySelectedBox == boxIndex) {
+                Unselect();
+                currentlySelectedRecord = recordIndex;
+            }
 
-            float recordOffset = ((float)(amountOfRecords % MAX_RECORDS_PER_BOX) / MAX_RECORDS_PER_BOX) * 0.8f - 0.4f;
+            float recordOffset = ((float)recordIndex / MAX_RECORDS_PER_BOX) * 0.8f - 0.4f;
             Vector3 positionOffset = new Vector3(recordOffset, 0, 0);
 
             GameObject newRecordObject = (GameObject)Instantiate(recordTemplate, box.position + positionOffset, recordTemplate.transform.rotation);
             newRecordObject.transform.parent = box;
             newRecordObject.name = "Record #" + amountOfRecords;
 
-            Record newRecord = newRecordObject.GetComponent<Record>();
-            newRecord.info = info;
+            RecordCase newRecord = newRecordObject.GetComponent<RecordCase>();
+            newRecord.album = album;
             records[amountOfRecords++] = newRecord;
         }
     }

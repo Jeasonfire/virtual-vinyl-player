@@ -42,13 +42,15 @@ public class Util : MonoBehaviour {
         return (string)configs[key];
     }
 
-    public static Texture2D LoadTexture (RecordInfo info) {
-        if (info.imageData.Length > 0) {
+    public static Texture2D LoadAlbumArt (Album album) {
+        if (album.imageData.Length > 0) {
             Texture2D result = new Texture2D(1, 1);
-            result.LoadImage(info.imageData);
+            result.LoadImage(album.imageData);
             return result;
         } else {
-            return null;
+            Color bgColor = Random.ColorHSV();
+            Color textColor = Util.GetOverlayColor(bgColor);
+            return TextToTextureRenderer.RenderText(album.artist + "\n" + album.name, bgColor, textColor);
         }
     }
 

@@ -5,7 +5,7 @@ using System.Threading;
 public class RecordPlayer : MonoBehaviour {
     /* Major things this  interacts with */
     public CameraManager cam;
-    public RecordsManager recordsManager;
+    public RecordManager recordsManager;
     
     /* Animatables */
     public HingeJoint spinnyThing;
@@ -28,7 +28,7 @@ public class RecordPlayer : MonoBehaviour {
     public float startSilence = 4.5f;
 
     /* Loading variables */
-    private RecordInfo loadingInfo;
+    private Album loadingInfo;
     public float loadingProgress = 0;
     public bool loadingSongs = false;
     private bool songsLoaded = false;
@@ -162,6 +162,7 @@ public class RecordPlayer : MonoBehaviour {
                 while (mainAudioSource.clip == null && currentSongIndex < songs.Length) {
                     mainAudioSource.clip = NextSong();
                 }
+                mainAudioSource.time = 0;
                 mainAudioSource.Play();
             } else {
                 StopPlaying();
@@ -211,7 +212,7 @@ public class RecordPlayer : MonoBehaviour {
     }
 
     float GetCurrentSongProgress() {
-        return (playedTime - TimeSpentOnLastSongs()) / GetCurrentSongLength();
+        return playedTime / GetCurrentSongLength();
     }
 
     float GetSongsProgress () {
@@ -299,8 +300,8 @@ public class RecordPlayer : MonoBehaviour {
     /* Loading things */
     /******************/
 
-    public void StartLoadingSong (Record record) {
-        loadingInfo = record.info;
+    public void StartLoadingSong (RecordCase record) {
+        loadingInfo = record.album;
         if (recordPlayText != null) {
             recordPlayText.text = "PLAY";
         }
@@ -346,7 +347,7 @@ public class RecordPlayer : MonoBehaviour {
             }
         }
         // Load cover art
-        recordRenderer.materials[1].mainTexture = Util.LoadTexture(loadingInfo);
+        recordRenderer.materials[1].mainTexture = Util.LoadAlbumArt(loadingInfo);
 
         // Finished loading
         songs = loadedSongs;
