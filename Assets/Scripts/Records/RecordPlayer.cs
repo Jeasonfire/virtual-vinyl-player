@@ -81,7 +81,7 @@ public class RecordPlayer : MonoBehaviour {
                 SetHandDown();
                 prepared = false;
                 if (HasHandReached(handAngleStart) && !playing) {
-                    crackleAudioSource.PlayOneShot(crackle, 4f);
+                    crackleAudioSource.PlayOneShot(crackle, 10f);
                     crackleAudioSource.PlayDelayed(crackle.length);
                     mainAudioSource.clip = songs[currentSongIndex];
                     while (mainAudioSource.clip == null && currentSongIndex < songs.Length) {
