@@ -2,6 +2,7 @@
 using System.IO;
 
 public class RecordCase : MonoBehaviour {
+    public Record record;
     public Transform meshTransform;
     public MeshRenderer meshRenderer;
     public TextMesh playText;
@@ -37,6 +38,8 @@ public class RecordCase : MonoBehaviour {
         // Material indices: 0 - back, 1 - front (cover)
         meshRenderer.materials[0].mainTexture = backTexture;
         meshRenderer.materials[1].mainTexture = frontTexture;
+
+        record.album = album;
     }
 
     void Update () {

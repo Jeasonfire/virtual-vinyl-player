@@ -4,7 +4,7 @@ using System.Collections;
 public class RPMWatcher : MonoBehaviour {
     public Rigidbody body;
     public float RPM = 0;
-    public bool debugPrint = false;
+    public float targetSpeed = 33;
 
     private float lastRotation;
 
@@ -16,9 +16,10 @@ public class RPMWatcher : MonoBehaviour {
         float rotation = body.rotation.eulerAngles.y;
         float deltaRotation = rotation - lastRotation;
         RPM = deltaRotation / Time.fixedDeltaTime / 6f;
-        if (debugPrint) {
-            Debug.Log("RPM: " + RPM);
-        }
         lastRotation = rotation;
 	}
+
+    public float GetSpeedRatio() {
+        return RPM / targetSpeed;
+    }
 }

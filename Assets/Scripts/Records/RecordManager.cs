@@ -3,12 +3,12 @@ using System.Net;
 using System.Threading;
 using System.Collections;
 
-public class RecordManager : MonoBehaviour {
+public class RecordManager : Interactible {
     public const int MAX_RECORDS_PER_BOX = 8;
 
+    public RecordPlayer recordPlayer;
     public GameObject recordTemplate;
     public GameObject[] boxes;
-    public RecordPlayer recordPlayer;
     public CameraManager cam;
     public Vector3 forward;
 
@@ -17,9 +17,6 @@ public class RecordManager : MonoBehaviour {
     private int currentlySelectedRecord = 0;
     private int[] savedSelectedRecords;
     private int currentlySelectedBox = 0;
-
-    private bool interacting = true;
-    private float interactingStartedAt = 0;
 
     private float scrollTime = 0;
     private bool selected = false;
@@ -34,11 +31,7 @@ public class RecordManager : MonoBehaviour {
         StartCoroutine("LoadRecordLibrary");
     }
 	
-	void Update () {
-        if (!interacting) {
-            return;
-        }
-
+	public override void Interact () {
         if (Input.GetAxis("Vertical") == 0 || (Input.GetAxis("Vertical") != 0 && Time.fixedTime - scrollTime > 0.5f)) {
             canScrollRecords = true;
         }
@@ -61,7 +54,7 @@ public class RecordManager : MonoBehaviour {
         if (!Input.GetButton("Action (Primary)")) {
             canSelect = true;
         }
-        if (Input.GetButton("Action (Primary)") && canSelect && !recordPlayer.loadingSongs) {
+        if (Input.GetButton("Action (Primary)") && canSelect) {
             bool shouldSelect = true;
             GameObject hovered = Util.GetHoveredGameObject();
             if (hovered != null) {
@@ -100,21 +93,9 @@ public class RecordManager : MonoBehaviour {
             }
             canSpin = false;
         }
-
-        if (Input.GetButton("Action (Tertiary)") && !recordPlayer.loadingSongs && Time.time - interactingStartedAt > 0.3) {
-            ChangeToRecordPlayer();
-        }
     }
 
-    void ChangeToRecordPlayer () {
-        interacting = false;
-        Unselect();
-        recordPlayer.StartInteracting();
-    }
-
-    public void StartInteracting() {
-        interacting = true;
-        interactingStartedAt = Time.time;
+    public override void StartInteracting() {
         cam.targetPosition = cam.GetDefaultPosition();
         cam.targetPosition.z = transform.position.z + currentlySelectedBox * 1.5f;
         cam.targetRotation = cam.GetDefaultRotation();
@@ -122,10 +103,14 @@ public class RecordManager : MonoBehaviour {
         cam.targetFov = cam.GetDefaultFov();
     }
 
+    public override void StopInteracting() {
+        Unselect();
+    }
+
     void ChooseSong () {
         RecordCase selectedRecord = GetRecordAt(currentlySelectedRecord);
         if (selectedRecord != null) {
-            recordPlayer.StartLoadingSong(selectedRecord);
+            recordPlayer.SetRecord(selectedRecord.record);
         }
     }
 

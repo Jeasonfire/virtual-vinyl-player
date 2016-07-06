@@ -54,13 +54,14 @@ public class Util : MonoBehaviour {
         }
     }
 
-    public static void LoadTempSong (string path) {
+    public static void LoadTempSong (string path, bool panRight) {
         cleanedUp = false;
         songLoaded = false;
         loadingThread = new Thread(new ThreadStart(() => {
             Process process = new Process();
             process.StartInfo.FileName = "ffmpeg";
-            process.StartInfo.Arguments = "-i \"" + path + "\" -y -nostdin " + TEMP_SONG_PATH;
+            string options = "";// " -map-channel 0.0." + (panRight ? "1" : "0") + " ";
+            process.StartInfo.Arguments = "-i \"" + path + "\" -y -nostdin " + options + TEMP_SONG_PATH;
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.RedirectStandardOutput = true;
@@ -73,6 +74,10 @@ public class Util : MonoBehaviour {
             songLoaded = true;
         }));
         loadingThread.Start();
+    }
+
+    public static bool HasSongBeenLoaded() {
+        return songLoaded;
     }
 
     public static void CleanupTempSongThreaded () {
@@ -94,10 +99,6 @@ public class Util : MonoBehaviour {
 
     public static bool TempSongCleanedUp () {
         return cleanedUp;
-    }
-
-    public static bool HasSongBeenLoaded () {
-        return songLoaded;
     }
 
     public static Color GetAverageColorFromTexture (Texture2D texture, float samplesX = 8, float samplesY = 8) {
