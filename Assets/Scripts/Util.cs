@@ -60,7 +60,7 @@ public class Util : MonoBehaviour {
         loadingThread = new Thread(new ThreadStart(() => {
             Process process = new Process();
             process.StartInfo.FileName = "ffmpeg";
-            string options = "";// " -map-channel 0.0." + (panRight ? "1" : "0") + " ";
+            string options = " -af \"pan=1c|c0=c" + (panRight ? "1" : "0") + "\" ";
             process.StartInfo.Arguments = "-i \"" + path + "\" -y -nostdin " + options + TEMP_SONG_PATH;
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.UseShellExecute = false;

@@ -4,7 +4,7 @@ using System.IO;
 
 public class AlbumLoader {
     public static string[] supportedExtensions = new string[] {
-        "wav", "mp3", "mp4", "m4a", "flac", "aif", "aiff"
+        "wav", "ogg", "mp3", "mp4", "m4a", "flac", "aif", "aiff"
     };
 
     private bool loading = true;
@@ -46,11 +46,18 @@ public class AlbumLoader {
                 }
                 if (tag.Album != null) {
                     albumName = tag.Album;
+                } else if (albumName == "Unknown") {
+                    albumName = sourceDir.Name;
                 }
                 if (tag.Pictures.Length > 0) {
                     albumArt = tag.Pictures[0].Data.Data;
                 }
-                string songName = tag.Title != null ? tag.Title : "Unknown Song";
+                string songName;
+                if (tag.Title != null) {
+                    songName = tag.Title;
+                } else {
+                    songName = info.Name.Replace("." + ext, "");
+                }
                 songs[songIndex++] = new Song(songName, artist, info.FullName);
             }
             loadedAlbums.Add(new Album(artist, albumName, albumArt, songs));
