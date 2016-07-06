@@ -4364,7 +4364,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 1297616477}
   - 114: {fileID: 1297616479}
-  - 114: {fileID: 1297616478}
   m_Layer: 0
   m_Name: Record Player
   m_TagString: Untagged
@@ -4391,19 +4390,6 @@ Transform:
   - {fileID: 1104382803}
   m_Father: {fileID: 0}
   m_RootOrder: 6
---- !u!114 &1297616478
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1297616476}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 404c9c3519fe2344ea720a1aa6f50e6d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spinnyThing: {fileID: 828452912}
-  spinnyThingWatcher: {fileID: 828452910}
 --- !u!114 &1297616479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4416,7 +4402,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 1847873627}
-  animator: {fileID: 1297616478}
+  animator:
+    recordPlayer: {fileID: 1297616479}
+    spinnyThing: {fileID: 828452912}
+    spinnyThingWatcher: {fileID: 828452910}
+  animProps:
+    interactionTransitionLength: 0.5
   recordTransform: {fileID: 1980518051}
   leftSpeaker: {fileID: 1838968576}
   rightSpeaker: {fileID: 852743690}
@@ -4811,6 +4802,11 @@ MonoBehaviour:
   - {fileID: 39025836}
   cam: {fileID: 1847873627}
   forward: {x: 0, y: 0, z: 0}
+  animProps:
+    boxScrollingTransitionLength: 0.5
+    interactionTransitionLength: 0.5
+    selectTransitionLength: 0.3
+    unselectTransitionLength: 0.3
 --- !u!1 &1583687421
 GameObject:
   m_ObjectHideFlags: 0
@@ -5725,12 +5721,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1fbe68aaaba9784e9edd9f845a37f20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetPosition: {x: 0, y: 0, z: 0}
-  targetRotation: {x: 0, y: 0, z: 0}
-  targetFov: 0
-  movementSpeed: 20
-  turningSpeed: 180
-  zoomingSpeed: 60
+  defaultPosition: {x: 0, y: 0, z: 0}
+  defaultRotation: {x: 0, y: 0, z: 0}
+  defaultFov: 0
 --- !u!114 &1847873628
 MonoBehaviour:
   m_ObjectHideFlags: 0

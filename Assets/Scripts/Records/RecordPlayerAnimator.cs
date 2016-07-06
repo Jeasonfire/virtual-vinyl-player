@@ -1,9 +1,15 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
-public class RecordPlayerAnimator : MonoBehaviour {
+[Serializable]
+public class RecordPlayerAnimator {
+    public RecordPlayer recordPlayer;
     public HingeJointUtils spinnyThing;
     public RPMWatcher spinnyThingWatcher;
+
+    void FixedUpdate() {
+    }
 
     public void StartPlaying() {
         spinnyThing.SetMotorForce(50);

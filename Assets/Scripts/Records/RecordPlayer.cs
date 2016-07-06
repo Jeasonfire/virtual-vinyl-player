@@ -1,17 +1,23 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System;
+
+[Serializable]
+public class RecordPlayerAnimationProperties {
+    [Range(0.01f, 2)]
+    public float interactionTransitionLength = 1;
+}
 
 public class RecordPlayer : Interactible {
     public CameraManager cam;
     public RecordPlayerAnimator animator;
+    public RecordPlayerAnimationProperties animProps;
     public Transform recordTransform;
     public AudioSource leftSpeaker;
     public AudioSource rightSpeaker;
 
     private Record record;
 
-    private void StartPlaying() {
+    public void StartPlaying(float position) {
         animator.StartPlaying();
         RecordSide current = record.GetCurrentSide();
         leftSpeaker.clip = current.GetClip(0, false);
@@ -20,7 +26,7 @@ public class RecordPlayer : Interactible {
         rightSpeaker.Play();
     }
     
-    private void StopPlaying() {
+    public void StopPlaying() {
         animator.StopPlaying();
     }
 
@@ -32,18 +38,18 @@ public class RecordPlayer : Interactible {
 
     public override void Interact() {
         if (Input.GetButton("Action (Primary)")) {
-            StartPlaying();
+            animator.StartPlaying();
         }
     }
 
     public override void StartInteracting() {
-        cam.targetPosition = cam.GetDefaultPosition();
-        cam.targetPosition.z = transform.position.z;
-        cam.targetRotation = cam.GetDefaultRotation();
-        cam.targetRotation.y = 90;
-        cam.targetRotation.x = 49;
-        cam.targetFov = cam.GetDefaultFov();
-        cam.targetFov = 30;
+        cam.positionTweener.AddMove(cam.GetModifiedDefaultPosition(transform.position, false, false, true), animProps.interactionTransitionLength);
+
+        cam.rotationTweener.ClearMoves();
+        cam.rotationTweener.AddMove(cam.GetModifiedDefaultRotation(new Vector3(49, 90, 0), true, true, false), animProps.interactionTransitionLength);
+
+        cam.fovTweener.ClearMoves();
+        cam.fovTweener.AddMove(30, animProps.interactionTransitionLength);
     }
 
     public override void StopInteracting() {

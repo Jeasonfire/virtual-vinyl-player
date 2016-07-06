@@ -1,7 +1,18 @@
 ﻿using UnityEngine;
-using System.Net;
-using System.Threading;
+using System;
 using System.Collections;
+
+[Serializable]
+public class RecordManagerAnimationProperties {
+    [Range(0.01f, 2)]
+    public float boxScrollingTransitionLength = 1;
+    [Range(0.01f, 2)]
+    public float interactionTransitionLength = 1;
+    [Range(0.01f, 2)]
+    public float selectTransitionLength = 1;
+    [Range(0.01f, 2)]
+    public float unselectTransitionLength = 1;
+}
 
 public class RecordManager : Interactible {
     public const int MAX_RECORDS_PER_BOX = 8;
@@ -11,6 +22,7 @@ public class RecordManager : Interactible {
     public GameObject[] boxes;
     public CameraManager cam;
     public Vector3 forward;
+    public RecordManagerAnimationProperties animProps;
 
     private RecordCase[] records;
     private int amountOfRecords;
@@ -96,11 +108,13 @@ public class RecordManager : Interactible {
     }
 
     public override void StartInteracting() {
-        cam.targetPosition = cam.GetDefaultPosition();
-        cam.targetPosition.z = transform.position.z + currentlySelectedBox * 1.5f;
-        cam.targetRotation = cam.GetDefaultRotation();
-        cam.targetRotation.y = 270;
-        cam.targetFov = cam.GetDefaultFov();
+        Vector3 newPosition = cam.GetModifiedDefaultPosition(new Vector3(0, 0, transform.position.z + currentlySelectedBox * 1.5f), false, false, true);
+        cam.positionTweener.AddMove(newPosition, animProps.interactionTransitionLength);
+
+        Vector3 newRotation = cam.GetModifiedDefaultRotation(new Vector3(0, 270, 0), false, true, false);
+        cam.rotationTweener.AddMove(newRotation, animProps.interactionTransitionLength);
+
+        cam.fovTweener.AddMove(cam.defaultFov, animProps.interactionTransitionLength);
     }
 
     public override void StopInteracting() {
@@ -120,9 +134,12 @@ public class RecordManager : Interactible {
             selected = true;
             SetSpringValue(selectedRecord.GetComponent<HingeJoint>(), 500, 0);
             selectedRecord.SetSelected(true);
-            cam.targetRotation.x = 0;
+
+            cam.rotationTweener.ClearMoves();
+            cam.rotationTweener.AddMoveXYZ(new Vector3(0, 0, 0), true, false, false, animProps.selectTransitionLength);
             float deltaFov = 16;
-            cam.targetFov = cam.GetDefaultFov() - deltaFov * (1f - (float)currentlySelectedRecord / MAX_RECORDS_PER_BOX);
+            cam.fovTweener.ClearMoves();
+            cam.fovTweener.AddMove(cam.defaultFov - deltaFov * (1f - (float)currentlySelectedRecord / MAX_RECORDS_PER_BOX), animProps.selectTransitionLength);
         }
     }
 
@@ -136,8 +153,11 @@ public class RecordManager : Interactible {
             }
             selected = false;
             selectedRecord.SetSelected(false);
-            cam.targetRotation.x = cam.GetDefaultRotation().x;
-            cam.targetFov = cam.GetDefaultFov();
+
+            cam.rotationTweener.ClearMoves();
+            cam.rotationTweener.AddMoveXYZ(new Vector3(cam.defaultRotation.x, 0, 0), true, false, false, animProps.unselectTransitionLength);
+            cam.fovTweener.ClearMoves();
+            cam.fovTweener.AddMove(cam.defaultFov, animProps.unselectTransitionLength);
         }
     }
 
@@ -181,8 +201,8 @@ public class RecordManager : Interactible {
             Unselect();
             currentlySelectedBox = tempCurrentlySelected;
             // Make camera's target something proper
-            Vector3 deltaPos = boxes[currentlySelectedBox].transform.position - boxes[previouslySelected].transform.position;
-            cam.targetPosition += deltaPos;
+            Vector3 newPosition = boxes[currentlySelectedBox].transform.position;
+            cam.positionTweener.AddMoveXYZ(newPosition, false, false, true, 0.15f);
         }
 
         currentlySelectedRecord = savedSelectedRecords[currentlySelectedBox];

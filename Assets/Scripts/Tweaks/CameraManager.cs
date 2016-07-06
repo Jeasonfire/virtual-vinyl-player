@@ -1,59 +1,49 @@
 ﻿using UnityEngine;
 
 public class CameraManager : MonoBehaviour {
-    public Vector3 targetPosition;
-    public Vector3 targetRotation;
-    public float targetFov;
-
-    public float movementSpeed = 6;
-    public float turningSpeed = 180;
-    public float zoomingSpeed = 60;
+    public VectorTweener positionTweener;
+    public VectorTweener rotationTweener;
+    public FloatTweener fovTweener;
+    public Vector3 defaultPosition;
+    public Vector3 defaultRotation;
+    public float defaultFov;
 
     private Camera _camera;
-    private Vector3 defaultPosition;
-    private Vector3 defaultRotation;
-    private float defaultFov;
 
     void Start () {
         _camera = GetComponent<Camera>();
 
-        targetPosition = defaultPosition = transform.position;
-        targetRotation = defaultRotation = transform.eulerAngles;
-        targetFov = defaultFov = _camera.fieldOfView;
+        defaultPosition = transform.position;
+        defaultRotation = transform.eulerAngles;
+        defaultFov = _camera.fieldOfView;
+
+        positionTweener = new VectorTweener(defaultPosition);
+        rotationTweener = new VectorTweener(defaultRotation);
+        fovTweener = new FloatTweener(defaultFov);
     }
 
-	void FixedUpdate () {
-        Vector3 deltaPosition = targetPosition - transform.position;
-        if (deltaPosition.magnitude > 0.001) {
-            transform.position += deltaPosition * movementSpeed * Time.fixedDeltaTime;
-        } else {
-            transform.position = targetPosition;
-        }
-
-        Vector3 deltaAngle = targetRotation - transform.eulerAngles;
-        if (deltaAngle.magnitude > 1) {
-            transform.eulerAngles += deltaAngle * turningSpeed * Time.fixedDeltaTime * 0.05f;
-        } else {
-            transform.eulerAngles = targetRotation;
-        }
-
-        float deltaFov = targetFov - _camera.fieldOfView;
-        if (deltaFov > 0.1) {
-            _camera.fieldOfView += deltaFov * zoomingSpeed * Time.fixedDeltaTime * 0.05f;
-        } else {
-            _camera.fieldOfView = targetFov;
-        }
-	}
-
-    public Vector3 GetDefaultPosition() {
-        return defaultPosition;
+	void Update() {
+        transform.position = positionTweener.GetPositionAtTime(Time.time);
+        transform.eulerAngles = rotationTweener.GetPositionAtTime(Time.time);
+        _camera.fieldOfView = fovTweener.GetPositionAtTime(Time.time);
     }
 
-    public Vector3 GetDefaultRotation() {
-        return defaultRotation;
+    public Vector3 GetModifiedDefaultPosition(Vector3 newPosition, bool applyX, bool applyY, bool applyZ) {
+        return GetModifiedDefaultVector(defaultPosition, newPosition, applyX, applyY, applyZ);
     }
 
-    public float GetDefaultFov() {
-        return defaultFov;
+    public Vector3 GetModifiedDefaultRotation(Vector3 newRotation, bool applyX, bool applyY, bool applyZ) {
+        return GetModifiedDefaultVector(defaultRotation, newRotation, applyX, applyY, applyZ);
+    }
+
+    private Vector3 GetModifiedDefaultVector(Vector3 a, Vector3 b, bool applyX, bool applyY, bool applyZ) {
+        Vector3 result = a;
+        if (applyX)
+            result.x = b.x;
+        if (applyY)
+            result.y = b.y;
+        if (applyZ)
+            result.z = b.z;
+        return result;
     }
 }

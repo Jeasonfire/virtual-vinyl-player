@@ -14,6 +14,9 @@ public class InteractionManager : MonoBehaviour {
     private int currentlyInteractingWith = 0;
 
     void Update() {
+        if (!Input.GetButton("Action (Tertiary)")) {
+            timeAtLastChange -= interactionCooldownPeriod;
+        }
         interactionsAreAllowed = Time.time - timeAtLastChange > interactionCooldownPeriod;
         if (interactionsAreAllowed) {
             // Interaction state changes
