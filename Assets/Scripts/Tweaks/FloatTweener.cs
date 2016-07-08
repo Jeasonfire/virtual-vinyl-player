@@ -45,6 +45,10 @@ public class FloatTweener {
         }
     }
 
+    public bool InProgress() {
+        return moveStack.Count == 0;
+    }
+
     private float GetLatestMove() {
         return moveStack.Count == 0 ? position : (float)(((object[])moveStack.Peek())[0]);
     }

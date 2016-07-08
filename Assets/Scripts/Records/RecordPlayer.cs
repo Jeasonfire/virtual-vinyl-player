@@ -1,11 +1,4 @@
 ﻿using UnityEngine;
-using System;
-
-[Serializable]
-public class RecordPlayerAnimationProperties {
-    [Range(0.01f, 2)]
-    public float interactionTransitionLength = 1;
-}
 
 public class RecordPlayer : Interactible {
     public CameraManager cam;
@@ -17,8 +10,11 @@ public class RecordPlayer : Interactible {
 
     private Record record;
 
+    public void Start() {
+        animator.SetAnimProps(animProps);
+    }
+
     public void StartPlaying(float position) {
-        animator.StartPlaying();
         RecordSide current = record.GetCurrentSide();
         leftSpeaker.clip = current.GetClip(0, false);
         rightSpeaker.clip = current.GetClip(0, true);
@@ -26,10 +22,6 @@ public class RecordPlayer : Interactible {
         rightSpeaker.Play();
     }
     
-    public void StopPlaying() {
-        animator.StopPlaying();
-    }
-
     public void SetRecord(Record record) {
         record.MoveToTransform(recordTransform);
         record.StartLoadingAlbum();
@@ -38,18 +30,16 @@ public class RecordPlayer : Interactible {
 
     public override void Interact() {
         if (Input.GetButton("Action (Primary)")) {
-            animator.StartPlaying();
+            animator.ToggleHand();
         }
     }
 
     public override void StartInteracting() {
-        cam.positionTweener.AddMove(cam.GetModifiedDefaultPosition(transform.position, false, false, true), animProps.interactionTransitionLength);
+        cam.positionTweener.ClearMoves();
+        cam.positionTweener.AddMove(cam.GetRelativePosition(transform.position, false, false, true), animProps.interactionTransitionLength);
 
         cam.rotationTweener.ClearMoves();
-        cam.rotationTweener.AddMove(cam.GetModifiedDefaultRotation(new Vector3(49, 90, 0), true, true, false), animProps.interactionTransitionLength);
-
-        cam.fovTweener.ClearMoves();
-        cam.fovTweener.AddMove(30, animProps.interactionTransitionLength);
+        cam.rotationTweener.AddMove(cam.GetRelativeRotation(new Vector3(49, 90, 0), true, true, false), animProps.interactionTransitionLength);
     }
 
     public override void StopInteracting() {

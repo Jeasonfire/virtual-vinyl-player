@@ -21,7 +21,7 @@ public class VectorTweener {
         moveStack.Enqueue(new object[] { move, length, time });
     }
 
-    public void AddMoveXYZ(Vector3 move, bool applyX, bool applyY, bool applyZ, float length) {
+    public void AddMoveXYZ(Vector3 move, float length, bool applyX, bool applyY, bool applyZ) {
         Vector3 appliedMove = GetLatestMove();
         if (applyX) 
             appliedMove.x = move.x;
@@ -54,6 +54,10 @@ public class VectorTweener {
                 return ratio * delta + position;
             }
         }
+    }
+
+    public bool InProgress() {
+        return moveStack.Count > 0;
     }
 
     private Vector3 GetLatestMove() {
