@@ -29,9 +29,6 @@ public class RecordPlayer : Interactible {
     }
 
     public override void Interact() {
-        if (Input.GetButton("Action (Primary)")) {
-            animator.ToggleHand();
-        }
     }
 
     public override void StartInteracting() {
@@ -39,7 +36,7 @@ public class RecordPlayer : Interactible {
         cam.positionTweener.AddMove(cam.GetRelativePosition(transform.position, false, false, true), animProps.interactionTransitionLength);
 
         cam.rotationTweener.ClearMoves();
-        cam.rotationTweener.AddMove(cam.GetRelativeRotation(new Vector3(49, 90, 0), true, true, false), animProps.interactionTransitionLength);
+        cam.rotationTweener.AddMove(cam.GetRelativeRotation(new Vector3(40, 90, 0), true, true, false), animProps.interactionTransitionLength);
     }
 
     public override void StopInteracting() {
