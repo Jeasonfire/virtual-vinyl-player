@@ -570,6 +570,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 131897074}
+  - 95: {fileID: 131897075}
   m_Layer: 0
   m_Name: Record Player Arm
   m_TagString: Untagged
@@ -592,6 +593,23 @@ Transform:
   - {fileID: 1629861232}
   m_Father: {fileID: 1297616477}
   m_RootOrder: 1
+--- !u!95 &131897075
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 131897073}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 746260a3092628f479be6b53f1229c25, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!1 &142490598
 GameObject:
   m_ObjectHideFlags: 0
@@ -1104,10 +1122,10 @@ Transform:
   m_PrefabParentObject: {fileID: 400004, guid: ef65212f06b05404988902f7588be564, type: 3}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 378980537}
-  m_LocalRotation: {x: -0.49999997, y: -0.49999997, z: -0.5000001, w: 0.4999999}
-  m_LocalPosition: {x: -0.0012085459, y: -0.0032875529, z: 0.0039993525}
+  m_LocalRotation: {x: -0.4999999, y: 0.50000006, z: -0.49999985, w: -0.50000024}
+  m_LocalPosition: {x: -0.0012085459, y: -0.0032877913, z: 0.003999144}
   m_LocalScale: {x: 80, y: 80, z: 80}
-  m_LocalEulerAnglesHint: {x: -449.9802, y: -90, z: 0}
+  m_LocalEulerAnglesHint: {x: -270, y: -90, z: 0}
   m_Children:
   - {fileID: 404220539}
   m_Father: {fileID: 1629861232}
@@ -4412,11 +4430,7 @@ MonoBehaviour:
     recordPlayer: {fileID: 1297616479}
     spinnyThing: {fileID: 828452912}
     spinnyThingWatcher: {fileID: 828452910}
-    arm: {fileID: 1629861233}
-    recordAngleStart: 37
-    recordAngleEnd: 58
-    handAngleUp: 10
-    handAngleDown: 0
+    animator: {fileID: 131897075}
   animProps:
     interactionTransitionLength: 0.5
     handVerticalTransitionLength: 0.25
@@ -4970,7 +4984,6 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 1629861232}
-  - 114: {fileID: 1629861233}
   m_Layer: 0
   m_Name: Record Player Arm Mesh Base
   m_TagString: Untagged
@@ -4984,31 +4997,14 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1629861231}
-  m_LocalRotation: {x: -0.00000032584137, y: 5.30863e-14, z: -1, w: 0.00000016292068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 360, z: 180}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 378980538}
   m_Father: {fileID: 131897074}
   m_RootOrder: 1
---- !u!114 &1629861233
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1629861231}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fddacc37da5f0b64d8449921cbf387d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  positionTweener:
-    position: {x: 0, y: 0, z: 0}
-  rotationTweener:
-    position: {x: 0, y: 0, z: 0}
-  scaleTweener:
-    position: {x: 0, y: 0, z: 0}
 --- !u!1 &1672016416
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,16 +3,11 @@
 public class RecordPlayer : Interactible {
     public CameraManager cam;
     public RecordPlayerAnimator animator;
-    public RecordPlayerAnimationProperties animProps;
     public Transform recordTransform;
     public AudioSource leftSpeaker;
     public AudioSource rightSpeaker;
 
     private Record record;
-
-    public void Start() {
-        animator.SetAnimProps(animProps);
-    }
 
     public void StartPlaying(float position) {
         RecordSide current = record.GetCurrentSide();
@@ -29,14 +24,18 @@ public class RecordPlayer : Interactible {
     }
 
     public override void Interact() {
+        animator.UpdateAnimations();
     }
 
     public override void StartInteracting() {
         cam.positionTweener.ClearMoves();
-        cam.positionTweener.AddMove(cam.GetRelativePosition(transform.position, false, false, true), animProps.interactionTransitionLength);
+        cam.positionTweener.AddMove(cam.GetRelativePosition(transform.position, false, false, true), 0.3f);
 
         cam.rotationTweener.ClearMoves();
-        cam.rotationTweener.AddMove(cam.GetRelativeRotation(new Vector3(40, 90, 0), true, true, false), animProps.interactionTransitionLength);
+        cam.rotationTweener.AddMove(cam.GetRelativeRotation(new Vector3(49, 90, 0), true, true, false), 0.3f);
+
+        cam.fovTweener.ClearMoves();
+        cam.fovTweener.AddMove(30, 0.3f);
     }
 
     public override void StopInteracting() {

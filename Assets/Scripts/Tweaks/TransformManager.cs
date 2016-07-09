@@ -27,7 +27,7 @@ public class TransformManager : MonoBehaviour {
 
     protected void UpdateTweeners() {
         transform.position = positionTweener.GetPositionAtTime(Time.time);
-        transform.eulerAngles = rotationTweener.GetPositionAtTime(Time.time);
+        transform.eulerAngles = FixRotation(rotationTweener.GetPositionAtTime(Time.time));
         transform.localScale = scaleTweener.GetPositionAtTime(Time.time);
     }
 
@@ -62,6 +62,14 @@ public class TransformManager : MonoBehaviour {
             result.y = b.y;
         if (applyZ)
             result.z = b.z;
+        return result;
+    }
+
+    private Vector3 FixRotation(Vector3 rotation) {
+        Vector3 result = new Vector3();
+        result.x = rotation.x < 0 ? 360 - ((rotation.x * -1) % 360) : (rotation.x % 360);
+        result.y = rotation.y < 0 ? 360 - ((rotation.y * -1) % 360) : (rotation.y % 360);
+        result.z = rotation.z < 0 ? 360 - ((rotation.z * -1) % 360) : (rotation.z % 360);
         return result;
     }
 }
