@@ -5,7 +5,7 @@ using System.Collections;
 [Serializable]
 public class VectorTweener {
     public Vector3 position;
-    
+
     private Queue moveStack = new Queue();
     private float lastTime = 0;
 

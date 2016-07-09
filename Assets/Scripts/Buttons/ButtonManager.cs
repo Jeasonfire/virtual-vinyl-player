@@ -18,7 +18,7 @@ public class ButtonManager : MonoBehaviour {
             RaycastHit hit;
             Physics.Raycast(mouseRay, out hit);
             Button button = null;
-            if (hit.collider != null && (button = hit.collider.GetComponent<Button>()) != null) {
+            if (hit.collider != null && (button = hit.collider.GetComponent<Button>()) != null && !button.locked) {
                 button.Toggle();
                 ignore = true;
             }

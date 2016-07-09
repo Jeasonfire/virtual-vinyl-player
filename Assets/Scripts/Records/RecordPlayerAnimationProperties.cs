@@ -7,4 +7,6 @@ public class RecordPlayerAnimationProperties {
     public float interactionTransitionLength = 1;
     [Range(0.01f, 2f)]
     public float handVerticalTransitionLength = 1;
+    [Range(0.01f, 2f)]
+    public float handPlayTransitionLength = 1;
 }

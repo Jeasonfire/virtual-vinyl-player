@@ -14,6 +14,7 @@ public class RecordPlayerAnimator {
     public float handAngleDown;
 
     private RecordPlayerAnimationProperties animProps;
+    private bool automated = false;
 
     void Start() {
         SetHandRot(new Vector3(0, 0, handAngleDown), animProps.handVerticalTransitionLength, false, false, true);
@@ -31,6 +32,31 @@ public class RecordPlayerAnimator {
         SetHandRot(new Vector3(0, 0, handAngleDown), animProps.handVerticalTransitionLength, false, false, true);
     }
 
+    public void MoveToPlayingPosition() {
+        SetHandRot(new Vector3(0, recordAngleStart, 0), animProps.handPlayTransitionLength, false, true, false);
+    }
+
+    public void Play() {
+        if (automated) {
+            SetArmUp();
+            MoveToPlayingPosition();
+            SetArmDown();
+        } else {
+            Debug.Log("Manual playing not supported yet!");
+        }
+    }
+
+    public void Stop() {
+        if (automated) {
+        } else {
+            Debug.Log("Manual stopping not supported yet!");
+        }
+    }
+
+    public void SetAutomated(bool automated) {
+        this.automated = automated;
+    }
+
     /* Checks */
 
     public bool MovingArm() {
@@ -38,11 +64,11 @@ public class RecordPlayerAnimator {
     }
 
     public bool IsHandUp() {
-        return GetArmRot().z == -handAngleUp;
+        return GetArmRot().z == handAngleUp;
     }
 
     public bool IsHandDown() {
-        return GetArmRot().z == -handAngleDown;
+        return GetArmRot().z == handAngleDown;
     }
 
     public bool CanStartPlaying() {
@@ -60,11 +86,11 @@ public class RecordPlayerAnimator {
     /* Hand manipulation */
 
     private void SetHandPos(Vector3 pos, float length, bool applyX = true, bool applyY = true, bool applyZ = true) {
-        arm.positionTweener.AddMoveXYZ(arm.GetRelativePosition(pos), length, applyX, applyY, applyZ);
+        arm.positionTweener.AddMoveXYZ(pos, length, applyX, applyY, applyZ);
     }
 
     private void SetHandRot(Vector3 rot, float length, bool applyX = true, bool applyY = true, bool applyZ = true) {
-        arm.rotationTweener.AddMoveXYZ(arm.GetRelativeRotation(rot) * -1, length, applyX, applyY, applyZ);
+        arm.rotationTweener.AddMoveXYZ(rot * -1, length, applyX, applyY, applyZ);
     }
 
     private Vector3 GetArmPos() {
@@ -72,6 +98,6 @@ public class RecordPlayerAnimator {
     }
 
     private Vector3 GetArmRot() {
-        return arm.rotationTweener.GetPositionAtTime(Time.time);
+        return arm.rotationTweener.GetPositionAtTime(Time.time) * -1;
     }
 }
