@@ -12,10 +12,17 @@ public class RecordPlayerAnimator {
     
     private Queue<string> queuedAnimations = new Queue<string>();
     private bool automated = true;
+    private bool started = false;
+    private bool playing = false;
 
     public void UpdateAnimations() {
         if (queuedAnimations.Count > 0 && animator.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
             animator.PlayInFixedTime(queuedAnimations.Dequeue());
+        }
+        if (!playing && animator.GetCurrentAnimatorStateInfo(0).IsName("Play")) {
+            playing = true;
+            spinnyThing.SetMotorForce(50);
+            recordPlayer.StartPlaying();
         }
     }
 
@@ -31,11 +38,19 @@ public class RecordPlayerAnimator {
         queuedAnimations.Enqueue("Prepare Play");
     }
 
+    public void StartPlaying() {
+        queuedAnimations.Enqueue("Play");
+    }
+
     public void Play() {
         if (automated) {
-            SetArmUp();
-            MoveToPlayingPosition();
-            SetArmDown();
+            if (!started) {
+                started = true;
+                SetArmUp();
+                MoveToPlayingPosition();
+                SetArmDown();
+                StartPlaying();
+            }
         } else {
             Debug.Log("Manual playing not supported yet!");
         }

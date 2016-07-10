@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class Record : MonoBehaviour {
+    public AudioClip mainCrackle;
     public AudioClip[] crackles;
     public MeshRenderer meshRenderer;
 
@@ -15,8 +16,8 @@ public class Record : MonoBehaviour {
     void Start() {
         originalTransform = transform;
         sides = new RecordSide[] {
-            new RecordSide(crackles),
-            new RecordSide(crackles)
+            new RecordSide(mainCrackle, crackles),
+            new RecordSide(mainCrackle, crackles)
         };
     }
 

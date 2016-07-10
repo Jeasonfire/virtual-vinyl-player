@@ -2629,7 +2629,7 @@ AudioSource:
   Spatialize: 0
   Priority: 128
   DopplerLevel: 0
-  MinDistance: 1
+  MinDistance: 3
   MaxDistance: 500
   Pan2D: 1
   rolloffMode: 0
@@ -4431,13 +4431,10 @@ MonoBehaviour:
     spinnyThing: {fileID: 828452912}
     spinnyThingWatcher: {fileID: 828452910}
     animator: {fileID: 131897075}
-  animProps:
-    interactionTransitionLength: 0.5
-    handVerticalTransitionLength: 0.25
-    handPlayTransitionLength: 1
   recordTransform: {fileID: 1980518051}
   leftSpeaker: {fileID: 1838968576}
   rightSpeaker: {fileID: 852743690}
+  mainCrackle: {fileID: 8300000, guid: 301bda3cabe2dc74897b4c4e0ea38707, type: 3}
 --- !u!1 &1309370461
 GameObject:
   m_ObjectHideFlags: 0
@@ -5635,7 +5632,7 @@ AudioSource:
   Spatialize: 0
   Priority: 128
   DopplerLevel: 0
-  MinDistance: 1
+  MinDistance: 3
   MaxDistance: 500
   Pan2D: -1
   rolloffMode: 0

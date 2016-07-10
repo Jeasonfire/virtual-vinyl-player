@@ -6,15 +6,15 @@ public class RecordPlayer : Interactible {
     public Transform recordTransform;
     public AudioSource leftSpeaker;
     public AudioSource rightSpeaker;
+    public AudioClip mainCrackle;
 
     private Record record;
+    private bool shouldBePlaying = false;
+    private int songIndex = 0;
 
-    public void StartPlaying(float position) {
-        RecordSide current = record.GetCurrentSide();
-        leftSpeaker.clip = current.GetClip(0, false);
-        rightSpeaker.clip = current.GetClip(0, true);
-        leftSpeaker.Play();
-        rightSpeaker.Play();
+    public void StartPlaying() {
+        PlayNextSong();
+        shouldBePlaying = true;
     }
     
     public void SetRecord(Record record) {
@@ -23,8 +23,19 @@ public class RecordPlayer : Interactible {
         this.record = record;
     }
 
+    private void PlayNextSong() {
+        leftSpeaker.clip = record.GetCurrentSide().GetClip(songIndex, false);
+        leftSpeaker.Play();
+        rightSpeaker.clip = record.GetCurrentSide().GetClip(songIndex, true);
+        rightSpeaker.Play();
+        songIndex++;
+    }
+
     public override void Interact() {
         animator.UpdateAnimations();
+        if (!leftSpeaker.isPlaying && shouldBePlaying) {
+            PlayNextSong();
+        }
     }
 
     public override void StartInteracting() {

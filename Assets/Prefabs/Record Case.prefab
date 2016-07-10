@@ -563,6 +563,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 611149a5993903a4db34870c2096488a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainCrackle: {fileID: 8300000, guid: 301bda3cabe2dc74897b4c4e0ea38707, type: 3}
   crackles:
   - {fileID: 8300000, guid: fe89b310e42fc544196b79e698b091f3, type: 3}
   - {fileID: 8300000, guid: aed91e2a18f8e5e418358987abee37aa, type: 3}

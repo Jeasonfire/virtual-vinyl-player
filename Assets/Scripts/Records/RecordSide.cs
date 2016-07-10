@@ -6,8 +6,10 @@ public class RecordSide {
     private ArrayList leftClips = new ArrayList();
     private ArrayList rightClips = new ArrayList();
 
-    public RecordSide(AudioClip[] crackles) {
+    public RecordSide(AudioClip mainCrackle, AudioClip[] crackles) {
         this.crackles = crackles;
+        AddSong(mainCrackle, true);
+        AddSong(mainCrackle, false);
     }
 
     private AudioClip GetCrackle() {
