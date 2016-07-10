@@ -8,20 +8,16 @@ public class RecordSide {
 
     public RecordSide(AudioClip mainCrackle, AudioClip[] crackles) {
         this.crackles = crackles;
-        AddSong(mainCrackle, true);
-        AddSong(mainCrackle, false);
+        AddSong(mainCrackle, mainCrackle);
     }
 
     private AudioClip GetCrackle() {
         return crackles[Random.Range(0, crackles.Length)];
     }
 
-    public void AddSong(AudioClip clip, bool panRight) {
-        if (panRight) {
-            rightClips.Add(clip);
-        } else {
-            leftClips.Add(clip);
-        }
+    public void AddSong(AudioClip leftClip, AudioClip rightClip) {
+        leftClips.Add(leftClip);
+        rightClips.Add(rightClip);
     }
 
     public AudioClip GetClip(int index, bool panRight = false) {

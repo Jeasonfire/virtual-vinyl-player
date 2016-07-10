@@ -18,18 +18,13 @@ AnimationClip:
       m_Curve:
       - time: 0
         value: {x: 0, y: -33, z: -5}
-        inSlope: {x: 0, y: 0, z: 11.877216}
-        outSlope: {x: 0, y: 0, z: 11.877216}
-        tangentMode: 0
-      - time: 0.35
-        value: {x: 0, y: -33, z: -1.9707885}
-        inSlope: {x: 0, y: 0, z: 7.7666078}
-        outSlope: {x: 0, y: 0, z: 7.7666078}
+        inSlope: {x: 0, y: 0, z: 2.5}
+        outSlope: {x: 0, y: 0, z: 2.5}
         tangentMode: 0
       - time: 2
         value: {x: 0, y: -33, z: 0}
-        inSlope: {x: 0, y: 0, z: 2.725656}
-        outSlope: {x: 0, y: 0, z: 2.725656}
+        inSlope: {x: 0, y: 0, z: 2.5}
+        outSlope: {x: 0, y: 0, z: 2.5}
         tangentMode: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
@@ -81,12 +76,12 @@ AnimationClip:
         value: 0
         inSlope: 0
         outSlope: 0
-        tangentMode: 0
+        tangentMode: 10
       - time: 2
         value: 0
         inSlope: 0
         outSlope: 0
-        tangentMode: 0
+        tangentMode: 10
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -101,12 +96,12 @@ AnimationClip:
         value: -33
         inSlope: 0
         outSlope: 0
-        tangentMode: 0
+        tangentMode: 10
       - time: 2
         value: -33
         inSlope: 0
         outSlope: 0
-        tangentMode: 0
+        tangentMode: 10
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -119,19 +114,14 @@ AnimationClip:
       m_Curve:
       - time: 0
         value: -5
-        inSlope: 11.877216
-        outSlope: 11.877216
-        tangentMode: 0
-      - time: 0.35
-        value: -1.9707885
-        inSlope: 7.7666078
-        outSlope: 7.7666078
-        tangentMode: 0
+        inSlope: 2.5
+        outSlope: 2.5
+        tangentMode: 10
       - time: 2
         value: 0
-        inSlope: 2.725656
-        outSlope: 2.725656
-        tangentMode: 0
+        inSlope: 2.5
+        outSlope: 2.5
+        tangentMode: 10
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4

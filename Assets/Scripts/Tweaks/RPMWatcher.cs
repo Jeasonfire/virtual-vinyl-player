@@ -6,6 +6,8 @@ public class RPMWatcher : MonoBehaviour {
     public float RPM = 0;
     public float targetSpeed = 33;
 
+    private int averageSampleIndex = 0;
+    private float[] averages = new float[100];
     private float lastRotation;
 
     void Start () {
@@ -15,8 +17,18 @@ public class RPMWatcher : MonoBehaviour {
 	void FixedUpdate () {
         float rotation = body.rotation.eulerAngles.y;
         float deltaRotation = rotation - lastRotation;
-        RPM = deltaRotation / Time.fixedDeltaTime / 6f;
+        float currentRPM = Mathf.Max(0, deltaRotation / Time.fixedDeltaTime / 6f);
         lastRotation = rotation;
+
+        averages[averageSampleIndex++] = currentRPM;
+        if (averageSampleIndex >= averages.Length) {
+            averageSampleIndex = 0;
+        }
+        float total = 0;
+        foreach (float rpm in averages) {
+            total += rpm;
+        }
+        RPM = Mathf.Ceil(total / averages.Length);
 	}
 
     public float GetSpeedRatio() {

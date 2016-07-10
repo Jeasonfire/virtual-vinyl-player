@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 
 [Serializable]
 public class RecordPlayerAnimator {
@@ -9,46 +7,30 @@ public class RecordPlayerAnimator {
     public HingeJointUtils spinnyThing;
     public RPMWatcher spinnyThingWatcher;
     public Animator animator;
-    
-    private Queue<string> queuedAnimations = new Queue<string>();
+
     private bool automated = true;
     private bool started = false;
     private bool playing = false;
 
     public void UpdateAnimations() {
-        if (queuedAnimations.Count > 0 && animator.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
-            animator.PlayInFixedTime(queuedAnimations.Dequeue());
-        }
-        if (!playing && animator.GetCurrentAnimatorStateInfo(0).IsName("Play")) {
+        if (!playing && animator.GetCurrentAnimatorStateInfo(0).IsName("Arm Down")) {
             playing = true;
-            spinnyThing.SetMotorForce(50);
             recordPlayer.StartPlaying();
         }
-    }
-
-    public void SetArmUp() {
-        queuedAnimations.Enqueue("Arm Up");
-    }
-
-    public void SetArmDown() {
-        queuedAnimations.Enqueue("Arm Down");
-    }
-
-    public void MoveToPlayingPosition() {
-        queuedAnimations.Enqueue("Prepare Play");
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Play")) {
+            animator.speed = spinnyThingWatcher.GetSpeedRatio();
+        }
     }
 
     public void StartPlaying() {
-        queuedAnimations.Enqueue("Play");
+        animator.Play("Arm Up");
+        spinnyThing.SetMotorForce(75);
     }
 
     public void Play() {
         if (automated) {
             if (!started) {
                 started = true;
-                SetArmUp();
-                MoveToPlayingPosition();
-                SetArmDown();
                 StartPlaying();
             }
         } else {

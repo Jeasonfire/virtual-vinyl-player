@@ -31,10 +31,18 @@ public class RecordPlayer : Interactible {
         songIndex++;
     }
 
+    private void SetPlaybackSpeed(float speed) {
+        leftSpeaker.pitch = speed;
+        rightSpeaker.pitch = speed;
+    }
+
     public override void Interact() {
         animator.UpdateAnimations();
         if (!leftSpeaker.isPlaying && shouldBePlaying) {
             PlayNextSong();
+        }
+        if (shouldBePlaying) {
+            SetPlaybackSpeed(animator.spinnyThingWatcher.GetSpeedRatio());
         }
     }
 

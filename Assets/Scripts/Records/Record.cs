@@ -76,8 +76,7 @@ public class Record : MonoBehaviour {
             if (sides[loadingSide].GetLoadedLength() + clips[0].length > sides[loadingSide].GetLength()) {
                 loadingSide = 1;
             }
-            sides[loadingSide].AddSong(clips[0], false);
-            sides[loadingSide].AddSong(clips[1], true);
+            sides[loadingSide].AddSong(clips[0], clips[1]);
         }
     }
 }
