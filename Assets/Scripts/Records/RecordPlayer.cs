@@ -51,10 +51,10 @@ public class RecordPlayer : Interactible {
         cam.positionTweener.AddMove(cam.GetRelativePosition(transform.position, false, false, true), 0.3f);
 
         cam.rotationTweener.ClearMoves();
-        cam.rotationTweener.AddMove(cam.GetRelativeRotation(new Vector3(49, 90, 0), true, true, false), 0.3f);
+        cam.rotationTweener.AddMove(cam.GetRelativeRotation(new Vector3(45, 90, 0), true, true, false), 0.3f);
 
         cam.fovTweener.ClearMoves();
-        cam.fovTweener.AddMove(30, 0.3f);
+        cam.fovTweener.AddMove(40, 0.3f);
     }
 
     public override void StopInteracting() {
