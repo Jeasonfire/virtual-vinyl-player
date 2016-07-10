@@ -7,6 +7,9 @@ Virtual Vinyl Player is software intended for listening to music and browsing th
 - Physics-based record browsing! It's almost like you're shifting through your collection with your *own fingers*.
 - Automatic metadata loading! Just tell the software where your music resides, and see your library come to it's metadata-y life right before your eyes!
 
+## Roadmap
+Check out the [Trello board](https://trello.com/b/xgDuMGVl/virtual-vinyl-player) for this project to see upcoming features!
+
 ## Credits
 * Textures: [Pixar One Twenty Eight by Pixar Animation Studios](https://community.renderman.pixar.com/article/114/library-pixar-one-twenty-eight.html) ([CC-BY](https://creativecommons.org/licenses/by/4.0/))
 * Font: [F25 Bank Printer by Volker Busse](http://www.dafont.com/f25-bank-printer.font)

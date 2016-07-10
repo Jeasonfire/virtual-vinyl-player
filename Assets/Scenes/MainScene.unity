@@ -1047,12 +1047,12 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 378980537}
   m_LocalRotation: {x: -0.4999999, y: 0.50000006, z: -0.49999985, w: -0.50000024}
-  m_LocalPosition: {x: -0.0012085459, y: -0.0032877913, z: 0.003999144}
+  m_LocalPosition: {x: -0.0012085448, y: -0.0032877917, z: 0.003999144}
   m_LocalScale: {x: 80, y: 80, z: 80}
   m_LocalEulerAnglesHint: {x: -270, y: -90, z: 0}
   m_Children:
   - {fileID: 404220539}
-  m_Father: {fileID: 1629861232}
+  m_Father: {fileID: 2109010428}
   m_RootOrder: 0
 --- !u!23 &378980540
 MeshRenderer:
@@ -2388,7 +2388,7 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 10
+  m_AngularDrag: 1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -4179,6 +4179,12 @@ GameObject:
 Transform:
   m_PrefabParentObject: {fileID: 403350, guid: bae3b8f0ed9d01241b723f69dd095e89, type: 2}
   m_PrefabInternal: {fileID: 1675297220}
+--- !u!114 &1214239802 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 11430094, guid: bae3b8f0ed9d01241b723f69dd095e89,
+    type: 2}
+  m_PrefabInternal: {fileID: 1675297220}
+  m_Script: {fileID: 11500000, guid: bcae0d2705abe3543bca94d9eeebdcb1, type: 3}
 --- !u!114 &1214239803
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4337,10 +4343,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 1847873627}
   animator:
+    playButton: {fileID: 1214239802}
     recordPlayer: {fileID: 1297616479}
     spinnyThing: {fileID: 828452912}
     spinnyThingWatcher: {fileID: 828452910}
     animator: {fileID: 131897075}
+    armAxisYTransform: {fileID: 2109010428}
+    armStartAngle: 0
+    armEndAngle: -23
+    playbackPosition: 0
   recordTransform: {fileID: 1980518051}
   leftSpeaker: {fileID: 1838968576}
   rightSpeaker: {fileID: 852743690}
@@ -4892,7 +4903,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 1629861232}
   m_Layer: 0
-  m_Name: Record Player Arm Mesh Base
+  m_Name: Record Player Arm Axis Y
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4909,7 +4920,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
-  - {fileID: 378980538}
+  - {fileID: 2043233437}
   m_Father: {fileID: 131897074}
   m_RootOrder: 1
 --- !u!1 &1672016416
@@ -5110,6 +5121,10 @@ Prefab:
     - target: {fileID: 11430094, guid: bae3b8f0ed9d01241b723f69dd095e89, type: 2}
       propertyPath: locked
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 190364, guid: bae3b8f0ed9d01241b723f69dd095e89, type: 2}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: bae3b8f0ed9d01241b723f69dd095e89, type: 2}
@@ -6216,6 +6231,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 828452908}
   m_RootOrder: 0
+--- !u!1 &2043233436
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2043233437}
+  m_Layer: 0
+  m_Name: Record Player Arm Axis Z
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2043233437
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2043233436}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children:
+  - {fileID: 2109010428}
+  m_Father: {fileID: 1629861232}
+  m_RootOrder: 0
 --- !u!1 &2088213033
 GameObject:
   m_ObjectHideFlags: 0
@@ -6457,6 +6501,10 @@ Prefab:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: ea4dcff85ce8d39439d9d115c22197b6, type: 2}
+    - target: {fileID: 190364, guid: bae3b8f0ed9d01241b723f69dd095e89, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: bae3b8f0ed9d01241b723f69dd095e89, type: 2}
   m_IsPrefabParent: 0
@@ -6486,6 +6534,35 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 2105310590}
   m_Script: {fileID: 11500000, guid: bcae0d2705abe3543bca94d9eeebdcb1, type: 3}
+--- !u!1 &2109010427
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2109010428}
+  m_Layer: 0
+  m_Name: Record Player Arm Secondary Axis Y
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2109010428
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2109010427}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children:
+  - {fileID: 378980538}
+  m_Father: {fileID: 2043233437}
+  m_RootOrder: 0
 --- !u!1 &2125569130
 GameObject:
   m_ObjectHideFlags: 0

@@ -29,7 +29,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Record Player Arm Mesh Base
+    path: Record Player Arm Axis Y/Record Player Arm Axis Z
   m_PositionCurves: []
   m_ScaleCurves: []
   m_FloatCurves: []
@@ -41,7 +41,7 @@ AnimationClip:
     m_Extent: {x: 0, y: 0, z: 0}
   m_ClipBindingConstant:
     genericBindings:
-    - path: 3681713643
+    - path: 3819271325
       attribute: 4
       script: {fileID: 0}
       classID: 4
@@ -74,26 +74,6 @@ AnimationClip:
       m_Curve:
       - time: 0
         value: 0
-        inSlope: -10
-        outSlope: -10
-        tangentMode: 10
-      - time: 0.5
-        value: -5
-        inSlope: -10
-        outSlope: -10
-        tangentMode: 10
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: localEulerAnglesRaw.z
-    path: Record Player Arm Mesh Base
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - time: 0
-        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 10
@@ -106,7 +86,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: Record Player Arm Mesh Base
+    path: Record Player Arm Axis Y/Record Player Arm Axis Z
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -126,7 +106,27 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: Record Player Arm Mesh Base
+    path: Record Player Arm Axis Y/Record Player Arm Axis Z
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - time: 0
+        value: 0
+        inSlope: -10
+        outSlope: -10
+        tangentMode: 10
+      - time: 0.5
+        value: -5
+        inSlope: -10
+        outSlope: -10
+        tangentMode: 10
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: localEulerAnglesRaw.z
+    path: Record Player Arm Axis Y/Record Player Arm Axis Z
     classID: 4
     script: {fileID: 0}
   m_EulerEditorCurves:
@@ -137,7 +137,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Record Player Arm Mesh Base
+    path: Record Player Arm Axis Y/Record Player Arm Axis Z
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -147,7 +147,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Record Player Arm Mesh Base
+    path: Record Player Arm Axis Y/Record Player Arm Axis Z
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -157,7 +157,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Record Player Arm Mesh Base
+    path: Record Player Arm Axis Y/Record Player Arm Axis Z
     classID: 4
     script: {fileID: 0}
   m_HasGenericRootTransform: 0

@@ -16,11 +16,27 @@ public class RecordPlayer : Interactible {
         PlayNextSong();
         shouldBePlaying = true;
     }
+
+    public void Pause() {
+        leftSpeaker.Pause();
+        rightSpeaker.Pause();
+        shouldBePlaying = false;
+    }
+
+    public void UnPause() {
+        leftSpeaker.UnPause();
+        rightSpeaker.UnPause();
+        shouldBePlaying = true;
+    }
     
     public void SetRecord(Record record) {
         record.MoveToTransform(recordTransform);
         record.StartLoadingAlbum();
         this.record = record;
+    }
+
+    public Record GetRecord() {
+        return record;
     }
 
     private void PlayNextSong() {
@@ -31,7 +47,7 @@ public class RecordPlayer : Interactible {
         songIndex++;
     }
 
-    private void SetPlaybackSpeed(float speed) {
+    public void SetPlaybackSpeed(float speed) {
         leftSpeaker.pitch = speed;
         rightSpeaker.pitch = speed;
     }
@@ -40,9 +56,6 @@ public class RecordPlayer : Interactible {
         animator.UpdateAnimations();
         if (!leftSpeaker.isPlaying && shouldBePlaying) {
             PlayNextSong();
-        }
-        if (shouldBePlaying) {
-            SetPlaybackSpeed(animator.spinnyThingWatcher.GetSpeedRatio());
         }
     }
 
