@@ -1,7 +1,7 @@
-# Play Music in the Third Dimension
+# Virtual Vinyl Player
 
 ## General
-Play Music in the Third Dimension (or shortly, playmusic3d) is a piece of software, intended for listening to music and browsing through collections, in a virtual, three-dimensional, space.
+Virtual Vinyl Player is software intended for listening to music and browsing through collections, in a virtual, three-dimensional space.
 
 ## Features
 - Physics-based record browsing! It's almost like you're shifting through your collection with your *own fingers*.
