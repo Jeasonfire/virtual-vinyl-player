@@ -12,7 +12,7 @@ public class RecordCase : MonoBehaviour {
     public AudioClip[] wooshSounds;
 
     // This album instance will only be used in debug situations (actual albums are filled out at runtime)
-    public Album album = new Album("The Recorders", "A Record", new byte[0], new Song[0]);
+    public Album album = new Album("The Recorders", "A Record", new byte[0], new byte[0], new Song[0]);
     public float spinTime = 0.25f;
     public float riseTime = 1f;
     public float lowerTime = 1f;
@@ -24,16 +24,8 @@ public class RecordCase : MonoBehaviour {
     private float targetMeshSpin = 0;
 
     void Start () {
-        Texture2D frontTexture = Util.LoadAlbumArt(album);
-        if (frontTexture == null) {
-        }
-
-        string songs = "<i>" + album.name + (album.name != null ? "</i> by <i>" + album.artist + ":\n" : "") + "</i>";
-        for (int i = 0; i < album.songs.Length; i++) {
-            songs += (i + 1) + ". " + album.songs[i].name + "\n";
-        }
-        Color backColor = Util.GetAverageColorFromTexture(frontTexture);
-        Texture2D backTexture = TextToTextureRenderer.RenderText(songs, backColor, Util.GetOverlayColor(backColor));
+        Texture2D frontTexture = Util.LoadCoverFront(album);
+        Texture2D backTexture = Util.LoadCoverBack(album, frontTexture);
 
         // Material indices: 0 - back, 1 - front (cover)
         meshRenderer.materials[0].mainTexture = backTexture;

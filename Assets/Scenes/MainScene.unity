@@ -5242,6 +5242,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea81d5680df35f5459b727cd277afaf1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blurringEffectMaterialInstance: {fileID: 2100000, guid: dcbfdd0f1ba3ff744b5000e388d14b16,
+    type: 2}
 --- !u!4 &1687291720
 Transform:
   m_ObjectHideFlags: 0
@@ -5338,6 +5340,14 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 137790, guid: c1770f1c1cc8dab449d28a54e5b23ae9, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343846, guid: c1770f1c1cc8dab449d28a54e5b23ae9, type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 36c681b4cee4a22498d36bfc32cbb732, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c1770f1c1cc8dab449d28a54e5b23ae9, type: 2}
   m_IsPrefabParent: 0

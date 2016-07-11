@@ -14,6 +14,8 @@ public class Util : MonoBehaviour {
     private static bool songLoaded = false;
     private static Thread loadingThread;
 
+    private static Material blurringEffectMaterial;
+
     public static void InitializeConfig () {
         if (File.Exists(CONFIG_PATH)) {
             string[] configContents = File.ReadAllLines(CONFIG_PATH);
@@ -42,15 +44,39 @@ public class Util : MonoBehaviour {
         return (string)configs[key];
     }
 
-    public static Texture2D LoadAlbumArt (Album album) {
-        if (album.imageData.Length > 0) {
+    public static Texture2D LoadCoverFront (Album album) {
+        if (album.coverFrontData.Length > 0) {
             Texture2D result = new Texture2D(1, 1);
-            result.LoadImage(album.imageData);
+            result.LoadImage(album.coverFrontData);
             return result;
         } else {
             Color bgColor = Random.ColorHSV();
-            Color textColor = Util.GetOverlayColor(bgColor);
-            return TextToTextureRenderer.RenderText(album.artist + "\n" + album.name, bgColor, textColor);
+            Color textColor = GetOverlayColor(bgColor);
+            return TextToTextureRenderer.RenderTextWithColor(album.artist + "\n" + album.name, bgColor, textColor);
+        }
+    }
+
+    public static Texture2D LoadCoverBack(Album album, Texture2D frontTexture) {
+        if (album.coverBackData.Length > 0) {
+            Texture2D result = new Texture2D(1, 1);
+            result.LoadImage(album.coverBackData);
+            return result;
+        } else {
+            string songs = "<i>" + album.name + (album.name != null ? "</i> by <i>" + album.artist + ":\n" : "") + "</i>";
+            for (int i = 0; i < album.songs.Length; i++) {
+                songs += (i + 1) + ". " + album.songs[i].name + "\n";
+            }
+            Color averageColor = GetAverageColorFromTexture(frontTexture);
+            Color textColor = GetOverlayColor(averageColor);
+
+            RenderTexture background = new RenderTexture(32, 32, -1);
+            background.filterMode = FilterMode.Trilinear;
+            float brightness = GetBrightnessFromColor(averageColor) < 0.5 ? 0.5f : 2f;
+            blurringEffectMaterial.SetFloat("_Brightness", brightness);
+            blurringEffectMaterial.SetFloat("_SamplingRange", 1f / 64f);
+            Graphics.Blit(frontTexture, background, blurringEffectMaterial);
+
+            return TextToTextureRenderer.RenderTextWithBackground(songs, background, textColor);
         }
     }
 
@@ -142,6 +168,14 @@ public class Util : MonoBehaviour {
 
     public static void Err (string msg) {
         UnityEngine.Debug.LogError(msg);    
+    }
+
+    /* Util non-static stuff */
+
+    public Material blurringEffectMaterialInstance;
+
+    void Start() {
+        blurringEffectMaterial = blurringEffectMaterialInstance;
     }
 
     void OnApplicationQuit () {

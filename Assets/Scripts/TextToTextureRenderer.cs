@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class TextToTextureRenderer : MonoBehaviour {
     private static TextToTextureRenderer textRenderer;
@@ -7,12 +6,30 @@ public class TextToTextureRenderer : MonoBehaviour {
     public RenderTexture textTexture;
     public Camera textCamera;
     public TextMesh textMesh;
-
-    public static Texture2D RenderText (string text, Color bgColor, Color textColor) {
+    public MeshRenderer textBackTex;
+    public MeshRenderer textBackColor;
+    
+    public static Texture2D RenderTextWithBackground(string text, Texture background, Color textColor) {
         if (textRenderer == null) {
             textRenderer = GameObject.Find("TextToTextureRenderer").GetComponent<TextToTextureRenderer>();
         }
-        textRenderer.textCamera.backgroundColor = bgColor;
+        textRenderer.textBackColor.enabled = false;
+        textRenderer.textBackTex.enabled = true;
+        textRenderer.textBackTex.material.mainTexture = background;
+        return RenderText(text, textColor);
+    }
+
+    public static Texture2D RenderTextWithColor(string text, Color bgColor, Color textColor) {
+        if (textRenderer == null) {
+            textRenderer = GameObject.Find("TextToTextureRenderer").GetComponent<TextToTextureRenderer>();
+        }
+        textRenderer.textBackColor.enabled = true;
+        textRenderer.textBackTex.enabled = false;
+        textRenderer.textBackColor.material.color = bgColor;
+        return RenderText(text, textColor);
+    }
+
+    private static Texture2D RenderText(string text, Color textColor) {
         textRenderer.textMesh.GetComponent<MeshRenderer>().material.color = textColor;
         textRenderer.textMesh.text = text;
         textRenderer.textCamera.Render();

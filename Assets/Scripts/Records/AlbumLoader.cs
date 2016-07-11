@@ -36,31 +36,44 @@ public class AlbumLoader {
             }
             string artist = "Unknown";
             string albumName = "Unknown";
-            byte[] albumArt = new byte[0];
+            byte[] albumArtFront = new byte[0];
+            byte[] albumArtBack = new byte[0];
             Song[] songs = new Song[songFiles.Length];
             int songIndex = 0;
             foreach (FileInfo info in songFiles) {
                 TagLib.Tag tag = TagLib.File.Create(info.FullName).Tag;
+                /* Artist */
                 if (tag.FirstPerformer != null) {
                     artist = tag.FirstPerformer;
                 }
+                /* Album name */
                 if (tag.Album != null) {
                     albumName = tag.Album;
                 } else if (albumName == "Unknown") {
                     albumName = sourceDir.Name;
                 }
-                if (tag.Pictures.Length > 0) {
-                    albumArt = tag.Pictures[0].Data.Data;
+                /* Album pictures */
+                foreach (TagLib.IPicture pic in tag.Pictures) {
+                    switch (pic.Type) {
+                        case TagLib.PictureType.FrontCover:
+                            albumArtFront = pic.Data.Data;
+                            break;
+                        case TagLib.PictureType.BackCover:
+                            albumArtBack = pic.Data.Data;
+                            break;
+                    }
                 }
+                /* Song name */
                 string songName;
                 if (tag.Title != null) {
                     songName = tag.Title;
                 } else {
                     songName = info.Name.Replace("." + ext, "");
                 }
+                /* Song done! */
                 songs[songIndex++] = new Song(songName, artist, info.FullName);
             }
-            loadedAlbums.Add(new Album(artist, albumName, albumArt, songs));
+            loadedAlbums.Add(new Album(artist, albumName, albumArtFront, albumArtBack, songs));
         }
         foreach (DirectoryInfo subDir in sourceDir.GetDirectories("*", SearchOption.TopDirectoryOnly)) {
             SearchForSongs(subDir);

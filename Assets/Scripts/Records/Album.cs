@@ -1,13 +1,15 @@
 ﻿public class Album {
     public string artist;
     public string name;
-    public byte[] imageData;
+    public byte[] coverFrontData;
+    public byte[] coverBackData;
     public Song[] songs;
 
-    public Album(string artist, string name, byte[] imageData, Song[] songs) {
+    public Album(string artist, string name, byte[] coverFrontData, byte[] coverBackData, Song[] songs) {
         this.artist = artist;
         this.name = name;
-        this.imageData = imageData;
+        this.coverFrontData = coverFrontData;
+        this.coverBackData = coverBackData;
         this.songs = songs;
     }
 }

@@ -42,7 +42,7 @@ public class Record : MonoBehaviour {
 
     private IEnumerator LoadAlbum() {
         // Load cover art
-        meshRenderer.materials[1].mainTexture = Util.LoadAlbumArt(album);
+        meshRenderer.materials[1].mainTexture = Util.LoadCoverFront(album);
 
         // Load songs
         for (int i = 0; i < album.songs.Length; i++) {
