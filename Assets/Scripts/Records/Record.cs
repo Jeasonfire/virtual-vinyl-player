@@ -32,6 +32,10 @@ public class Record : MonoBehaviour {
         transform.localScale = t.localScale;
     }
 
+    public void Flip() {
+        listeningSide = (listeningSide + 1) % 2;
+    }
+
     public RecordSide GetCurrentSide() {
         return sides[listeningSide];
     }

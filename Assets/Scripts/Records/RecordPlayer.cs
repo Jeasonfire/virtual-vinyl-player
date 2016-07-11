@@ -9,24 +9,16 @@ public class RecordPlayer : Interactible {
     public AudioClip mainCrackle;
 
     private Record record;
-    private bool shouldBePlaying = false;
-    private int songIndex = 0;
-
-    public void StartPlaying() {
-        PlayNextSong();
-        shouldBePlaying = true;
-    }
+    private int currentlyPlayingSongIndex = -1;
 
     public void Pause() {
         leftSpeaker.Pause();
         rightSpeaker.Pause();
-        shouldBePlaying = false;
     }
 
     public void UnPause() {
         leftSpeaker.UnPause();
         rightSpeaker.UnPause();
-        shouldBePlaying = true;
     }
     
     public void SetRecord(Record record) {
@@ -39,12 +31,33 @@ public class RecordPlayer : Interactible {
         return record;
     }
 
-    private void PlayNextSong() {
-        leftSpeaker.clip = record.GetCurrentSide().GetClip(songIndex, false);
-        leftSpeaker.Play();
-        rightSpeaker.clip = record.GetCurrentSide().GetClip(songIndex, true);
-        rightSpeaker.Play();
-        songIndex++;
+    /** <summary>
+     * NOTE:
+     * updatePositionInSong shouldn't be true if this is called multiple times 
+     * in a second, because it causes crackling in the music. Occasionally setting
+     * it to true, like when skipping by user input, is fine and not really noticeable. 
+     * </summary>
+     */
+    public void PlaySongAt(float position, bool updatePositionInSong = false) {
+        RecordSide recordSide = record.GetCurrentSide();
+        int index = recordSide.GetClipIndex(position);
+        bool changeSong = currentlyPlayingSongIndex != index;
+        if (changeSong || updatePositionInSong) {
+            float currentSongTime = position - recordSide.GetLengthUntil(index);
+            leftSpeaker.time = currentSongTime;
+            rightSpeaker.time = currentSongTime;
+        }
+        if (changeSong) {
+            leftSpeaker.clip = record.GetCurrentSide().GetClipLeft(index);
+            leftSpeaker.Play();
+            rightSpeaker.clip = record.GetCurrentSide().GetClipRight(index);
+            rightSpeaker.Play();
+            currentlyPlayingSongIndex = index;
+        }
+    }
+
+    public bool HasSongsToPlay(float position) {
+        return record.GetCurrentSide().GetClipIndex(position) != -1;
     }
 
     public void SetPlaybackSpeed(float speed) {
@@ -53,10 +66,10 @@ public class RecordPlayer : Interactible {
     }
 
     public override void Interact() {
-        animator.UpdateAnimations();
-        if (!leftSpeaker.isPlaying && shouldBePlaying) {
-            PlayNextSong();
+        if (Input.GetButton("Action (Secondary)")) {
+            animator.FastForward();
         }
+        animator.Update();
     }
 
     public override void StartInteracting() {

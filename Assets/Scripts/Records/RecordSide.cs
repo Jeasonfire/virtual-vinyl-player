@@ -20,17 +20,36 @@ public class RecordSide {
         rightClips.Add(rightClip);
     }
 
-    public AudioClip GetClip(int index, bool panRight = false) {
-        return (AudioClip)(index < leftClips.Count ? (panRight ? rightClips[index] : leftClips[index]) : GetCrackle());
+    /* Clip getters */
+
+    public AudioClip GetClipLeft(int index) {
+        return (AudioClip)(index < leftClips.Count ? leftClips[index] : GetCrackle());
     }
+
+    public AudioClip GetClipRight(int index) {
+        return (AudioClip)(index < rightClips.Count ?  rightClips[index] : GetCrackle());
+    }
+
+    public int GetClipIndex(float position) {
+        float lengthSoFar = 0;
+        for (int i = 0; i < leftClips.Count; i++) {
+            lengthSoFar += GetClipLeft(i).length;
+            if (position <= lengthSoFar) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /* Length getters */
 
     public float GetLength() {
         // (20 min) * (60 s/min)
-        return 20 * 60;
+        return 3 * 60;
     }
 
     public float GetLengthOfClip(int index) {
-        return GetClip(index).length;
+        return GetClipLeft(index).length;
     }
 
     public float GetLengthUntil(int index) {
