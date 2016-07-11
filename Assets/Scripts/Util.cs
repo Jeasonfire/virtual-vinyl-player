@@ -66,17 +66,13 @@ public class Util : MonoBehaviour {
             for (int i = 0; i < album.songs.Length; i++) {
                 songs += (i + 1) + ". " + album.songs[i].name + "\n";
             }
-            Color averageColor = GetAverageColorFromTexture(frontTexture);
-            Color textColor = GetOverlayColor(averageColor);
-
-            RenderTexture background = new RenderTexture(32, 32, -1);
+            RenderTexture background = new RenderTexture(256, 256, -1);
             background.filterMode = FilterMode.Trilinear;
-            float brightness = GetBrightnessFromColor(averageColor) < 0.5 ? 0.5f : 2f;
-            blurringEffectMaterial.SetFloat("_Brightness", brightness);
+            blurringEffectMaterial.SetFloat("_Brightness", 0.4f);
             blurringEffectMaterial.SetFloat("_SamplingRange", 1f / 64f);
             Graphics.Blit(frontTexture, background, blurringEffectMaterial);
 
-            return TextToTextureRenderer.RenderTextWithBackground(songs, background, textColor);
+            return TextToTextureRenderer.RenderTextWithBackground(songs, background, new Color(1, 1, 1));
         }
     }
 
