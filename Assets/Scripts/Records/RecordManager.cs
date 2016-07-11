@@ -136,6 +136,7 @@ public class RecordManager : Interactible {
             selected = true;
             SetSpringValue(selectedRecord.GetComponent<HingeJoint>(), 500, 0);
             selectedRecord.SetSelected(true);
+            selectedRecord.record.MoveToDisplay();
 
             cam.rotationTweener.ClearMoves();
             cam.rotationTweener.AddMoveXYZ(new Vector3(0, 0, 0), animProps.selectTransitionLength, true, false, false);
@@ -155,6 +156,7 @@ public class RecordManager : Interactible {
             }
             selected = false;
             selectedRecord.SetSelected(false);
+            selectedRecord.record.MoveToOrigin();
 
             cam.rotationTweener.ClearMoves();
             cam.rotationTweener.AddMoveXYZ(new Vector3(40, 0, 0), animProps.unselectTransitionLength, true, false, false);

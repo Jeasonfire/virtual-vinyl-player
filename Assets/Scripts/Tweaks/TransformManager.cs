@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 public class TransformManager : MonoBehaviour {
+    public bool useLocalTransform = false;
     public VectorTweener positionTweener;
     public VectorTweener rotationTweener;
     public VectorTweener scaleTweener;
@@ -13,8 +14,13 @@ public class TransformManager : MonoBehaviour {
     }
 
     protected void InitializeTweeners() {
-        defaultPosition = transform.position;
-        defaultRotation = transform.eulerAngles;
+        if (useLocalTransform) {
+            defaultPosition = transform.localPosition;
+            defaultRotation = transform.localEulerAngles;
+        } else {
+            defaultPosition = transform.position;
+            defaultRotation = transform.eulerAngles;
+        }
         defaultScale = transform.localScale;
         positionTweener = new VectorTweener(defaultPosition);
         rotationTweener = new VectorTweener(defaultRotation);
@@ -26,8 +32,13 @@ public class TransformManager : MonoBehaviour {
     }
 
     protected void UpdateTweeners() {
-        transform.position = positionTweener.GetPositionAtTime(Time.time);
-        transform.eulerAngles = FixRotation(rotationTweener.GetPositionAtTime(Time.time));
+        if (useLocalTransform) {
+            transform.localPosition = positionTweener.GetPositionAtTime(Time.time);
+            transform.localEulerAngles = FixRotation(rotationTweener.GetPositionAtTime(Time.time));
+        } else {
+            transform.position = positionTweener.GetPositionAtTime(Time.time);
+            transform.eulerAngles = FixRotation(rotationTweener.GetPositionAtTime(Time.time));
+        }
         transform.localScale = scaleTweener.GetPositionAtTime(Time.time);
     }
 

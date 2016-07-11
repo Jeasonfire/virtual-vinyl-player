@@ -45,7 +45,7 @@ public class RecordSide {
 
     public float GetLength() {
         // (20 min) * (60 s/min)
-        return 3 * 60;
+        return 20 * 60;
     }
 
     public float GetLengthOfClip(int index) {

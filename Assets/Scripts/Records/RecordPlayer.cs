@@ -22,7 +22,8 @@ public class RecordPlayer : Interactible {
     }
     
     public void SetRecord(Record record) {
-        record.MoveToTransform(recordTransform);
+        record.SetPlayerTransform(recordTransform);
+        record.MoveToPlayer();
         record.StartLoadingAlbum();
         this.record = record;
     }

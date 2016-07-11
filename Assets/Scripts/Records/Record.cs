@@ -5,31 +5,60 @@ public class Record : MonoBehaviour {
     public AudioClip mainCrackle;
     public AudioClip[] crackles;
     public MeshRenderer meshRenderer;
+    public TransformManager transformManager;
 
-    private Transform originalTransform;
-    
+    private Transform playerTransform;
+    private Transform originalParent;
+    private bool onPlayer = false;
+
     public Album album;
     private RecordSide[] sides;
     private int loadingSide = 0;
     private int listeningSide = 0;
 
     void Start() {
-        originalTransform = transform;
+        originalParent = transform.parent;
         sides = new RecordSide[] {
             new RecordSide(mainCrackle, crackles),
             new RecordSide(mainCrackle, crackles)
         };
     }
 
-    public void ReturnToOriginalTransform() {
-        MoveToTransform(originalTransform);
+    public void SetPlayerTransform(Transform transform) {
+        playerTransform = transform;
     }
 
-    public void MoveToTransform(Transform t) {
-        transform.parent = t.parent;
-        transform.localPosition = t.localPosition;
-        transform.localRotation = t.localRotation;
-        transform.localScale = t.localScale;
+    public void MoveToPlayer() {
+        if (playerTransform != null) {
+            onPlayer = true;
+            transform.parent = playerTransform;
+            transformManager.positionTweener.position = transform.localPosition;
+            transformManager.positionTweener.AddMove(transform.localPosition + new Vector3(0, 0, 2), 0.25f);
+            transformManager.positionTweener.AddMove(new Vector3(0, 0, 0), 0.25f);
+            transformManager.rotationTweener.AddMove(new Vector3(0, 0, 90), 0.25f);
+            transformManager.rotationTweener.AddMove(new Vector3(0, 0, 0), 0.25f);
+        }
+    }
+
+    public void MoveToCase() {
+        onPlayer = false;
+        transform.parent = originalParent;
+        transformManager.positionTweener.position = transform.localPosition;
+        MoveToOrigin();
+    }
+
+    public void MoveToOrigin() {
+        if (!onPlayer) {
+            transformManager.positionTweener.AddMove(new Vector3(0, 0.5f, 0), 0.25f);
+            transformManager.rotationTweener.AddMove(new Vector3(0, 0, 90), 0.25f);
+        }
+    }
+
+    public void MoveToDisplay() {
+        if (!onPlayer) {
+            transformManager.positionTweener.AddMove(new Vector3(0, 0.5f, -0.5f), 0.25f);
+            transformManager.rotationTweener.AddMove(new Vector3(0, 0, 90), 0.25f);
+        }
     }
 
     public void Flip() {

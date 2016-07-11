@@ -42,6 +42,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 499288}
   - 114: {fileID: 11484908}
+  - 114: {fileID: 11471602}
   m_Layer: 0
   m_Name: Record
   m_TagString: Untagged
@@ -59,8 +60,8 @@ GameObject:
   - 4: {fileID: 416674}
   - 54: {fileID: 5484272}
   - 59: {fileID: 5948982}
-  - 114: {fileID: 11496968}
   - 65: {fileID: 6504938}
+  - 114: {fileID: 11496968}
   m_Layer: 0
   m_Name: Record Case
   m_TagString: Untagged
@@ -552,6 +553,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentRecord: {fileID: 11496968}
+--- !u!114 &11471602
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 138872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fddacc37da5f0b64d8449921cbf387d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  useLocalTransform: 1
+  positionTweener:
+    position: {x: 0, y: 0, z: 0}
+  rotationTweener:
+    position: {x: 0, y: 0, z: 0}
+  scaleTweener:
+    position: {x: 0, y: 0, z: 0}
 --- !u!114 &11484908
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -572,6 +591,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: cd90cb78590049544b003cc837eb0fcc, type: 3}
   - {fileID: 8300000, guid: b586d7f9ff419714ebf48373137ed44f, type: 3}
   meshRenderer: {fileID: 2371342}
+  transformManager: {fileID: 11471602}
 --- !u!114 &11496968
 MonoBehaviour:
   m_ObjectHideFlags: 1
