@@ -15,13 +15,13 @@ public class Button : MonoBehaviour {
         }
         if (activated && !actuallyActivated) {
             buttonBaseTransformManager.scaleTweener.AddMove(buttonBaseTransformManager.GetRelativeScale(new Vector3(1, 0.5f, 1)), 0.25f);
-            activatable.Activate();
             actuallyActivated = activated;
+            activatable.Activate();
         }
         if (!activated && actuallyActivated) {
             buttonBaseTransformManager.scaleTweener.AddMove(buttonBaseTransformManager.GetRelativeScale(Vector3.one), 0.25f);
-            activatable.Deactivate();
             actuallyActivated = activated;
+            activatable.Deactivate();
         }
     }
 

@@ -26,7 +26,7 @@ public class TransformManager : MonoBehaviour {
         rotationTweener = new VectorTweener(defaultRotation);
         scaleTweener = new VectorTweener(defaultScale);
     }
-    
+
     void Update() {
         UpdateTweeners();
     }

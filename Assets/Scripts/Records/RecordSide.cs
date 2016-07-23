@@ -43,9 +43,12 @@ public class RecordSide {
 
     /* Length getters */
 
+    /* This returns the amount of seconds it should take to play the whole record, regardless of content. (ie. "empty space" is not ignored) */
     public float GetLength() {
-        // (20 min) * (60 s/min)
-        return 20 * 60;
+        /* This would be a constant value if this was a realistic representation of vinyls, obviously.
+         * But, in the interest of usability and my lazyness, this is not the case. 
+         * Result: this method is realistic only when albums are less than 20 minutes long. */
+        return 20 * 60 < GetLoadedLength() ? GetLoadedLength() : 20 * 60;
     }
 
     public float GetLengthOfClip(int index) {

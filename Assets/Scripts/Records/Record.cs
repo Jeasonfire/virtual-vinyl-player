@@ -40,14 +40,18 @@ public class Record : MonoBehaviour {
         }
     }
 
-    public void MoveToCase() {
+    public void TeleportToCase() {
         onPlayer = false;
         transform.parent = originalParent;
+        transform.localPosition = new Vector3(0, 0.5f, 0);
+        transform.localEulerAngles = new Vector3(0, 0, 90);
         transformManager.positionTweener.position = transform.localPosition;
-        MoveToOrigin();
+        transformManager.positionTweener.ClearMoves();
+        transformManager.rotationTweener.position = transform.localEulerAngles;
+        transformManager.rotationTweener.ClearMoves();
     }
 
-    public void MoveToOrigin() {
+    public void MoveToCase() {
         if (!onPlayer) {
             transformManager.positionTweener.AddMove(new Vector3(0, 0.5f, 0), 0.25f);
             transformManager.rotationTweener.AddMove(new Vector3(0, 0, 90), 0.25f);
@@ -89,7 +93,7 @@ public class Record : MonoBehaviour {
                 while (!Util.HasSongBeenLoaded()) {
                     yield return null;
                 }
-                
+
                 // Load from  temp file
                 WWW www = new WWW("file://" + Util.TEMP_SONG_PATH);
                 clips[j] = www.GetAudioClip(true, false, AudioType.WAV);
@@ -100,15 +104,22 @@ public class Record : MonoBehaviour {
                     yield return null;
                 }
                 clips[j].name = album.songs[i].artist + " - " + album.songs[i].name;
-                
+
                 Util.CleanupTempSongThreaded();
                 while (!Util.TempSongCleanedUp()) {
                     yield return null;
                 }
             }
-            if (sides[loadingSide].GetLoadedLength() + clips[0].length > sides[loadingSide].GetLength()) {
-                loadingSide = 1;
-            }
+
+            /* See RecordSide.GetLength() for an explanation as to why the following is commented out. */
+            /*if (sides[loadingSide].GetLoadedLength() + clips[0].length > sides[loadingSide].GetLength()) {
+                if (loadingSide == 0) {
+                    loadingSide = 1;
+                } else {
+                    continue;
+                }
+            }*/
+
             sides[loadingSide].AddSong(clips[0], clips[1]);
         }
     }

@@ -20,12 +20,21 @@ public class RecordPlayer : Interactible {
         leftSpeaker.UnPause();
         rightSpeaker.UnPause();
     }
+
+    public bool IsPaused() {
+        return !leftSpeaker.isPlaying && !rightSpeaker.isPlaying;
+    }
     
     public void SetRecord(Record record) {
-        record.SetPlayerTransform(recordTransform);
-        record.MoveToPlayer();
-        record.StartLoadingAlbum();
-        this.record = record;
+        if (animator.IsReceivingRecords()) {
+            if (this.record != null) {
+                this.record.TeleportToCase();
+            }
+            record.SetPlayerTransform(recordTransform);
+            record.MoveToPlayer();
+            record.StartLoadingAlbum();
+            this.record = record;
+        }
     }
 
     public Record GetRecord() {

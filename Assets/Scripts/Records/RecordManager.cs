@@ -156,7 +156,7 @@ public class RecordManager : Interactible {
             }
             selected = false;
             selectedRecord.SetSelected(false);
-            selectedRecord.record.MoveToOrigin();
+            selectedRecord.record.MoveToCase();
 
             cam.rotationTweener.ClearMoves();
             cam.rotationTweener.AddMoveXYZ(new Vector3(40, 0, 0), animProps.unselectTransitionLength, true, false, false);

@@ -2,6 +2,12 @@
 using System;
 using System.Collections.Generic;
 
+/*
+ * WARNING: This file contains absolutely horrible code. Not recommended reading, at all.
+ *
+ * not that this program is well made anyway but this is even worse
+ */
+
 [Serializable]
 public class RecordPlayerAnimator {
     public Button playButton;
@@ -10,8 +16,8 @@ public class RecordPlayerAnimator {
     public RPMWatcher spinnyThingWatcher;
     public Animator animator;
     public Transform armAxisYTransform;
-    public float armStartAngle = -33;
-    public float armEndAngle = -56;
+    public float armStartAngle = 0;
+    public float armEndAngle = 0;
 
     private Queue<string> animations = new Queue<string>();
     private bool animationControlled = false;
@@ -30,7 +36,13 @@ public class RecordPlayerAnimator {
     private void UpdateAnimations() {
         animationControlled = animations.Count != 0 || !IsAnimatorIdle() || rewind;
 
-        if (animations.Count > 0 && IsAnimatorIdle()) {
+        if (rewind) {
+            playbackPosition -= recordPlayer.GetRecord().GetCurrentSide().GetLength() * Time.deltaTime;
+            if (playbackPosition <= 0) {
+                playbackPosition = 0;
+                rewind = false;
+            }
+        } else if (animations.Count > 0 && IsAnimatorIdle()) {
             string[] parts = animations.Dequeue().Split(':');
             int index = int.Parse(parts[0]);
             if (index >= 0) {
@@ -38,7 +50,11 @@ public class RecordPlayerAnimator {
             } else {
                 switch (parts[1]) {
                     case "Pause": recordPlayer.Pause(); break;
-                    case "UnPause": recordPlayer.UnPause(); break;
+                    case "UnPause":
+                        UpdateSong();
+                        recordPlayer.UnPause();
+                        break;
+                    case "UnPlay": playButton.activated = false; break;
                     case "SpinStart": spinnyThing.SetMotorForce(50); break;
                     case "SpinStop": spinnyThing.SetMotorForce(0); break;
                     case "Flip": recordPlayer.GetRecord().Flip(); break;
@@ -50,31 +66,16 @@ public class RecordPlayerAnimator {
                 }
             }
         }
-
-        if (rewind) {
-            playbackPosition -= recordPlayer.GetRecord().GetCurrentSide().GetLength() * Time.deltaTime;
-            if (playbackPosition <= 0) {
-                playbackPosition = 0;
-                rewind = false;
-            }
-        }
     }
 
     private void UpdateSong() {
-        playbackPosition += Time.deltaTime;
+        if (recordPlayer.IsPaused()) {
+            playbackPosition += Time.deltaTime;
+        }
         if (recordPlayer.HasSongsToPlay(playbackPosition)) {
             recordPlayer.PlaySongAt(playbackPosition);
         } else {
-            EnqueueAnimation("Lock");
-            EnqueueAnimation("Pause");
-            EnqueueAnimation("Arm Up", 1);
-            EnqueueAnimation("SpinStop");
-            EnqueueAnimation("Rewind");
-            EnqueueAnimation("Flip");
-            EnqueueAnimation("SpinStart");
-            EnqueueAnimation("Arm Down", 1);
-            EnqueueAnimation("UnPause");
-            EnqueueAnimation("UnLock");
+            Rewind();
         }
     }
 
@@ -87,17 +88,31 @@ public class RecordPlayerAnimator {
 
     public void FastForward() {
         if (!animationControlled && prepared) {
-            playbackPosition += 20 * Time.deltaTime;
+            playbackPosition += 5 * 60 * Time.deltaTime;
             if (recordPlayer.HasSongsToPlay(playbackPosition)) {
                 recordPlayer.PlaySongAt(playbackPosition, true);
             }
         }
     }
 
+    public void Rewind() {
+        if (prepared) {
+            EnqueueAnimation("Lock");
+            EnqueueAnimation("Pause");
+            EnqueueAnimation("SpinStop");
+            EnqueueAnimation("Rewind");
+            EnqueueAnimation("Unprepare", 0);
+            EnqueueAnimation("Arm Down", 0);
+            EnqueueAnimation("UnPrepare");
+            EnqueueAnimation("UnPlay");
+            EnqueueAnimation("UnLock");
+        }
+    }
+
     public void Pause() {
         EnqueueAnimation("Lock");
         EnqueueAnimation("Pause");
-        EnqueueAnimation("Arm Up", 1);
+        EnqueueAnimation("Arm Up", 0);
         EnqueueAnimation("SpinStop");
         EnqueueAnimation("UnLock");
     }
@@ -106,19 +121,23 @@ public class RecordPlayerAnimator {
         if (prepared) {
             EnqueueAnimation("Lock");
             EnqueueAnimation("SpinStart");
-            EnqueueAnimation("Arm Down", 1);
-            EnqueueAnimation("UnPause");
-            EnqueueAnimation("UnLock");
-        } else {
-            EnqueueAnimation("Lock");
-            EnqueueAnimation("SpinStart");
-            EnqueueAnimation("Arm Up", 0);
-            EnqueueAnimation("Prepare", 0);
             EnqueueAnimation("Arm Down", 0);
             EnqueueAnimation("UnPause");
             EnqueueAnimation("UnLock");
-            EnqueueAnimation("Prepare");
+        } else {
+            Prepare();
         }
+    }
+
+    public void Prepare() {
+        EnqueueAnimation("Lock");
+        EnqueueAnimation("SpinStart");
+        EnqueueAnimation("Arm Up", 0);
+        EnqueueAnimation("Prepare", 0);
+        EnqueueAnimation("Arm Down", 0);
+        EnqueueAnimation("Prepare");
+        EnqueueAnimation("UnPause");
+        EnqueueAnimation("UnLock");
     }
 
     public void Play() {
@@ -144,5 +163,9 @@ public class RecordPlayerAnimator {
             }
         }
         return true;
+    }
+
+    public bool IsReceivingRecords() {
+        return !animationControlled && !prepared;
     }
 }
