@@ -23,6 +23,7 @@ public class RecordPlayerAnimator {
     private bool animationControlled = false;
     private bool prepared = false;
     private bool rewind = false;
+	private bool paused = false;
     private float playbackPosition = 0;
 
     public void Update() {
@@ -69,7 +70,7 @@ public class RecordPlayerAnimator {
     }
 
     private void UpdateSong() {
-        if (recordPlayer.IsPaused()) {
+        if (!recordPlayer.IsPaused()) {
             playbackPosition += Time.deltaTime;
         }
         if (recordPlayer.HasSongsToPlay(playbackPosition)) {
@@ -98,6 +99,9 @@ public class RecordPlayerAnimator {
     public void Rewind() {
         if (prepared) {
             EnqueueAnimation("Lock");
+			if (!paused) {
+				EnqueueAnimation("Arm Up", 0);
+			}
             EnqueueAnimation("Pause");
             EnqueueAnimation("SpinStop");
             EnqueueAnimation("Rewind");
@@ -114,7 +118,8 @@ public class RecordPlayerAnimator {
         EnqueueAnimation("Pause");
         EnqueueAnimation("Arm Up", 0);
         EnqueueAnimation("SpinStop");
-        EnqueueAnimation("UnLock");
+		EnqueueAnimation("UnLock");
+		paused = true;
     }
 
     public void UnPause() {
@@ -127,6 +132,7 @@ public class RecordPlayerAnimator {
         } else {
             Prepare();
         }
+		paused = false;
     }
 
     public void Prepare() {

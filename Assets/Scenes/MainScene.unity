@@ -4464,7 +4464,7 @@ MonoBehaviour:
     animator: {fileID: 1297616478}
     armAxisYTransform: {fileID: 2109010428}
     armStartAngle: 0
-    armEndAngle: -17
+    armEndAngle: -20
   recordTransform: {fileID: 1980518051}
   leftSpeaker: {fileID: 1838968576}
   rightSpeaker: {fileID: 852743690}
@@ -5837,8 +5837,8 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
+  near clip plane: 0.1
+  far clip plane: 10
   field of view: 50
   orthographic: 0
   orthographic size: 5
