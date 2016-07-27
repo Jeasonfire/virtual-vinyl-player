@@ -1,24 +1,30 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class RecordSide {
-    private AudioClip[] crackles;
+public class RecordData {
+    public static AudioClip[] crackles;
     private ArrayList leftClips = new ArrayList();
-    private ArrayList rightClips = new ArrayList();
-
-    public RecordSide(AudioClip mainCrackle, AudioClip[] crackles) {
-        this.crackles = crackles;
-        AddSong(mainCrackle, mainCrackle);
-    }
+	private ArrayList rightClips = new ArrayList();
+	private ArrayList clipLengths = new ArrayList();
 
     private AudioClip GetCrackle() {
         return crackles[Random.Range(0, crackles.Length)];
     }
 
+	public void UnloadSongs() {
+		for (int i = 0; i < leftClips.Count; i++) {
+			MonoBehaviour.Destroy(((AudioClip) leftClips[i]));
+			MonoBehaviour.Destroy(((AudioClip) rightClips[i]));
+		}
+		leftClips.Clear();
+		rightClips.Clear();
+	}
+
     public void AddSong(AudioClip leftClip, AudioClip rightClip) {
-        leftClips.Add(leftClip);
+		leftClips.Add(leftClip);
         rightClips.Add(rightClip);
-    }
+		clipLengths.Add(leftClip.length);
+	}
 
     /* Clip getters */
 
@@ -52,7 +58,7 @@ public class RecordSide {
     }
 
     public float GetLengthOfClip(int index) {
-        return GetClipLeft(index).length;
+		return (float) clipLengths[index];
     }
 
     public float GetLengthUntil(int index) {
@@ -64,6 +70,6 @@ public class RecordSide {
     }
 
     public float GetLoadedLength() {
-        return GetLengthUntil(leftClips.Count);
+		return GetLengthUntil(clipLengths.Count);
     }
 }

@@ -31,8 +31,8 @@ public class RecordPlayer : Interactible {
                 this.record.TeleportToCase();
             }
             record.SetPlayerTransform(recordTransform);
-            record.MoveToPlayer();
-            record.StartLoadingAlbum();
+			record.MoveToPlayer();
+			record.StartLoadingAlbum();
             this.record = record;
         }
     }
@@ -49,25 +49,25 @@ public class RecordPlayer : Interactible {
      * </summary>
      */
     public void PlaySongAt(float position, bool updatePositionInSong = false) {
-        RecordSide recordSide = record.GetCurrentSide();
-        int index = recordSide.GetClipIndex(position);
+		RecordData recordData = record.GetRecordData();
+        int index = recordData.GetClipIndex(position);
         bool changeSong = currentlyPlayingSongIndex != index;
         if (changeSong || updatePositionInSong) {
-            float currentSongTime = position - recordSide.GetLengthUntil(index);
+            float currentSongTime = position - recordData.GetLengthUntil(index);
             leftSpeaker.time = currentSongTime;
             rightSpeaker.time = currentSongTime;
         }
         if (changeSong) {
-            leftSpeaker.clip = record.GetCurrentSide().GetClipLeft(index);
+			leftSpeaker.clip = recordData.GetClipLeft(index);
             leftSpeaker.Play();
-            rightSpeaker.clip = record.GetCurrentSide().GetClipRight(index);
+			rightSpeaker.clip = recordData.GetClipRight(index);
             rightSpeaker.Play();
             currentlyPlayingSongIndex = index;
         }
     }
 
     public bool HasSongsToPlay(float position) {
-        return record.GetCurrentSide().GetClipIndex(position) != -1;
+		return record.GetRecordData().GetClipIndex(position) != -1;
     }
 
     public void SetPlaybackSpeed(float speed) {

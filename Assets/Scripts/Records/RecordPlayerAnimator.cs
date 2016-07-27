@@ -10,6 +10,10 @@ using System.Collections.Generic;
 
 [Serializable]
 public class RecordPlayerAnimator {
+	public AudioClip crackleSound;
+	public AudioSource crackleSource;
+	public bool shouldCrackle = true;
+
     public Button playButton;
     public RecordPlayer recordPlayer;
     public HingeJointUtils spinnyThing;
@@ -38,7 +42,7 @@ public class RecordPlayerAnimator {
         animationControlled = animations.Count != 0 || !IsAnimatorIdle() || rewind;
 
         if (rewind) {
-            playbackPosition -= recordPlayer.GetRecord().GetCurrentSide().GetLength() * Time.deltaTime;
+            playbackPosition -= recordPlayer.GetRecord().GetRecordData().GetLength() * Time.deltaTime;
             if (playbackPosition <= 0) {
                 playbackPosition = 0;
                 rewind = false;
@@ -58,12 +62,12 @@ public class RecordPlayerAnimator {
                     case "UnPlay": playButton.activated = false; break;
                     case "SpinStart": spinnyThing.SetMotorForce(50); break;
                     case "SpinStop": spinnyThing.SetMotorForce(0); break;
-                    case "Flip": recordPlayer.GetRecord().Flip(); break;
                     case "Rewind": rewind = true; break;
                     case "Lock": playButton.locked = true; break;
                     case "UnLock": playButton.locked = false; break;
                     case "Prepare": prepared = true; break;
                     case "UnPrepare": prepared = false; break;
+					case "Crackle": if (shouldCrackle) crackleSource.PlayOneShot(crackleSound); break;
                 }
             }
         }
@@ -81,7 +85,7 @@ public class RecordPlayerAnimator {
     }
 
     private void UpdateArm() {
-        float recordLength = recordPlayer.GetRecord().GetCurrentSide().GetLength();
+        float recordLength = recordPlayer.GetRecord().GetRecordData().GetLength();
         Vector3 rot = armAxisYTransform.localEulerAngles;
         rot.y = (armEndAngle - armStartAngle) * (playbackPosition / recordLength) + armStartAngle;
         armAxisYTransform.localEulerAngles = rot;
@@ -99,11 +103,11 @@ public class RecordPlayerAnimator {
     public void Rewind() {
         if (prepared) {
             EnqueueAnimation("Lock");
+			EnqueueAnimation("Pause");
 			if (!paused) {
 				EnqueueAnimation("Arm Up", 0);
 			}
-            EnqueueAnimation("Pause");
-            EnqueueAnimation("SpinStop");
+			EnqueueAnimation("SpinStop");
             EnqueueAnimation("Rewind");
             EnqueueAnimation("Unprepare", 0);
             EnqueueAnimation("Arm Down", 0);
@@ -127,6 +131,7 @@ public class RecordPlayerAnimator {
             EnqueueAnimation("Lock");
             EnqueueAnimation("SpinStart");
             EnqueueAnimation("Arm Down", 0);
+			EnqueueAnimation("Crackle");
             EnqueueAnimation("UnPause");
             EnqueueAnimation("UnLock");
         } else {

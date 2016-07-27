@@ -2,7 +2,8 @@
 using System.Collections;
 
 public class Record : MonoBehaviour {
-    public AudioClip mainCrackle;
+	private static RecordData lastLoadedRecordData = null;
+
     public AudioClip[] crackles;
     public MeshRenderer meshRenderer;
     public TransformManager transformManager;
@@ -12,16 +13,14 @@ public class Record : MonoBehaviour {
     private bool onPlayer = false;
 
     public Album album;
-    private RecordSide[] sides;
-    private int loadingSide = 0;
-    private int listeningSide = 0;
+	private RecordData recordData;
 
     void Start() {
         originalParent = transform.parent;
-        sides = new RecordSide[] {
-            new RecordSide(mainCrackle, crackles),
-            new RecordSide(mainCrackle, crackles)
-        };
+		recordData = new RecordData();
+		if (RecordData.crackles == null) {
+			RecordData.crackles = crackles;
+		}
     }
 
     public void SetPlayerTransform(Transform transform) {
@@ -65,23 +64,24 @@ public class Record : MonoBehaviour {
         }
     }
 
-    public void Flip() {
-        listeningSide = (listeningSide + 1) % 2;
+	public RecordData GetRecordData() {
+        return recordData;
     }
 
-    public RecordSide GetCurrentSide() {
-        return sides[listeningSide];
-    }
+	public void LoadCoverArt() {
+		meshRenderer.materials[1].mainTexture = Util.LoadCoverFront(album);
+	}
 
-    public void StartLoadingAlbum() {
-        StartCoroutine("LoadAlbum");
-    }
+	public void StartLoadingAlbum() {
+		StartCoroutine("LoadAlbum");
+	}
 
-    private IEnumerator LoadAlbum() {
-        // Load cover art
-        meshRenderer.materials[1].mainTexture = Util.LoadCoverFront(album);
+	private IEnumerator LoadAlbum() {
+		if (lastLoadedRecordData != null && lastLoadedRecordData != recordData) {
+			lastLoadedRecordData.UnloadSongs();
+		}
+		lastLoadedRecordData = recordData;
 
-        // Load songs
         for (int i = 0; i < album.songs.Length; i++) {
             // Progress
             string path = album.songs[i].path;
@@ -111,16 +111,7 @@ public class Record : MonoBehaviour {
                 }
             }
 
-            /* See RecordSide.GetLength() for an explanation as to why the following is commented out. */
-            /*if (sides[loadingSide].GetLoadedLength() + clips[0].length > sides[loadingSide].GetLength()) {
-                if (loadingSide == 0) {
-                    loadingSide = 1;
-                } else {
-                    continue;
-                }
-            }*/
-
-            sides[loadingSide].AddSong(clips[0], clips[1]);
+            recordData.AddSong(clips[0], clips[1]);
         }
     }
 }
